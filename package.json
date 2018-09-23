@@ -1,0 +1,33 @@
+{
+  "name": "dainv.com.mymarket",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "await-to-js": "^2.0.1",
+    "bcrypt": "^2.0.1",
+    "bcrypt-nodejs": "0.0.3",
+    "bcrypt-promise": "^2.0.0",
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.4",
+    "debug": "^4.0.1",
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3",
+    "jsonwebtoken": "^8.3.0",
+    "method-override": "^3.0.0",
+    "morgan": "^1.9.1",
+    "mysql2": "^1.6.1",
+    "node-gyp": "^3.8.0",
+    "parse-error": "^0.2.0",
+    "passport": "^0.4.0",
+    "passport-jwt": "^4.0.0",
+    "sequelize": "^4.38.1",
+    "sequelize-cli": "^4.1.1",
+    "validator": "^10.7.1"
+  }
+}
