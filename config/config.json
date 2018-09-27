@@ -1,0 +1,23 @@
+{  
+  "test": {
+  "username": "root",
+  "password": "dainguyen95",
+  "database": "market_test",
+  "host": "127.0.0.1",
+  "dialect": "mysql"
+},
+  "development": {
+    "username": "root",
+    "password": "dainguyen95",
+    "database": "market_development",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": "dainguyen95",
+    "database": "market",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}
