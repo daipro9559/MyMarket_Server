@@ -1,13 +1,19 @@
 'use strict'
-const bcrypt = require('bcrypt')
-const bcrypt_promise = require('bcrypt-promise')
-const jwt = require('jsonwebtoken')
+const bcrypt = require('bcrypt');
+const bcrypt_promise = require('bcrypt-promise');
+const jwt = require('jsonwebtoken');
 const { to,TE } = require('../services/utilService');
 
-const CONFIG = require('../config/conf')
+const CONFIG = require('../config/conf');
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
+    id: {
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: DataTypes.INTEGER
+    },
     name: DataTypes.STRING,
     email: {
       type: DataTypes.STRING,
@@ -34,8 +40,8 @@ module.exports = (sequelize, DataTypes) => {
     // associations can be defined here
   };
 
-  User.beforeSave(async (user, options) => {
-    let err
+  User.beforeSave(async function (user, options){
+    let err;
     if (user.changed('password')) {
       let salt, hash;
       [err, salt] = await to(bcrypt.genSalt(10));
@@ -46,24 +52,24 @@ module.exports = (sequelize, DataTypes) => {
     }
   });
 
-  User.prototype.comparePassword = async (pw) => {
+  User.prototype.comparePassword = async function(pw) {
     let err, pass
-    if (!this, password) {
-      console.log("password is not set")
+    if(!this.password) {
+      TE('password not set')
     }
-    [err, pass] = await bcrypt.compare(pw, this.password)
-    if (err) console.log(err)
-    if (!pass) console.log("invalid password")
+    [err, pass] = await to(bcrypt_promise.compare(pw, this.password))
+    if (err) {TE(err)}
+    if (!pass) {TE('invalid password')}
     return this
   }
 
-  User.prototype.getJWT = () => {
-    let exp_time = parseInt(CONFIG.jwt_expiration)
-    return "Bearer " + jwt.sign({ user_id: this.id }, CONFIG.jwt_encryption, { expiresIn: exp_time })
+  User.prototype.getJWT = function(){
+    let exp_time = parseInt(CONFIG.jwt_expiration);
+    return "Bearer " + jwt.sign({ user_id: this.id }, CONFIG.jwt_encryption, { expiresIn: exp_time });
   };
-  User.prototype.toWeb = (pw) => {
-    let json = this.toJSON()
-    return json
+  User.prototype.toWeb = function(){
+    let json = this.toJSON();
+    return json;
   }
-  return User
+  return User;
 }

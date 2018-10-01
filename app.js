@@ -1,12 +1,13 @@
-const express = require('express');
-const logger = require('morgan');
-const cors = require('cors');
+const express = require('express')
+const logger = require('morgan')
+const cors = require('cors')
 const app = express();
-const passport = require('passport');
+const passport = require('passport')
 var bodyParser = require('body-parser')
 var methodOverride = require('method-override')
-const v1    = require('./routes/v1');
-const CONFIG = require('./config/conf');
+const v1    = require('./routes/v1')
+const CONFIG = require('./config/conf')
+const pe = require('parse-error')
 
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({

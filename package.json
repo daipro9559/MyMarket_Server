@@ -18,6 +18,7 @@
     "debug": "^4.0.1",
     "dotenv": "^6.0.0",
     "express": "^4.16.3",
+    "http-status": "^1.2.0",
     "jsonwebtoken": "^8.3.0",
     "method-override": "^3.0.0",
     "morgan": "^1.9.1",
