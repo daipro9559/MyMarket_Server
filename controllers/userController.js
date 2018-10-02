@@ -11,7 +11,10 @@ module.exports.create = async (req,res)=>{
         var err,user
         [err,user] = await to(authService.createUser(body))
         if (err) return ReE(res,err,422)
-        return ReS(res,{message:"Create User successfully!"},200)
+        var dataResponse ={}
+        dataResponse.message="Create User successfully!"
+        dataResponse.user = user.toWeb()
+        return ReS(res,dataResponse,200)
     }
 }
 
@@ -28,3 +31,27 @@ module.exports.login = async (req,res)=>{
      dataResponse.token=user.getJWT()
      return ReS(res,dataResponse,status.OK)
 }
+module.exports.forgot = async (req,res)=>{
+    let email = req.body.email,err,success
+    [err,success] = await to(authService.forgotPass(email))
+    if(err) {
+       return ReE(res,err,status.NOT_FOUND)
+    }
+    if(!success){
+       return ReS(res,{message:"can't do this action"})
+    }else{
+      return  ReS(res,{message:"Please check mail to receive code"})
+    }
+ }
+
+ module.exports.changePassByCode  = async (req,res)=>{
+     let userInfo = req.body,err,user
+     [err,user] = await to(authService.changePassByCode(userInfo))
+     if (err){
+         ReE(res,err,status.NOT_ACCEPTABLE)
+     }
+     var dataResponse = {}
+     dataResponse.message = "Change password successfully"
+     dataResponse.email = user.email
+     return ReS(res,dataResponse,status.OK)
+ }

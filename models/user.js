@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
       unique: true,
       validate: {
         isEmail:
-          { msg: "Phone number invalid." }
+          { msg: "Email invalid." }
       }
     },
     phone: {
@@ -35,6 +35,12 @@ module.exports = (sequelize, DataTypes) => {
     password: {
       type: DataTypes.STRING,
     },
+    code:{
+      type:DataTypes.INTEGER
+    },
+    codeExp:{
+      type:DataTypes.INTEGER	
+    }
   });
   User.associate = function (models) {
     // associations can be defined here
