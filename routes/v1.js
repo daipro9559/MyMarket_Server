@@ -11,4 +11,5 @@ router.get('/', function(req, res, next) {
   router.post('/user/login',userController.login)
   router.post('/user/forgot', userController.forgot)
   router.post('/user/changePassByCode',userController.changePassByCode)
+  router.get('/users',passport.authenticate('jwt', { session: false }),userController.getAllUser)
   module.exports = router;

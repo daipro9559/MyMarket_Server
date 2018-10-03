@@ -71,7 +71,11 @@ module.exports = (sequelize, DataTypes) => {
 
   User.prototype.getJWT = function(){
     let exp_time = parseInt(CONFIG.jwt_expiration);
-    return "Bearer " + jwt.sign({ user_id: this.id }, CONFIG.jwt_encryption, { expiresIn: exp_time });
+    let dataToken = {},token;
+    dataToken.user_id = this.id
+    dataToken.time = Date.now()
+    token = jwt.sign(dataToken,CONFIG.jwt_encryption)
+    return "Bearer " + token;
   };
   User.prototype.toWeb = function(){
     let json = this.toJSON();

@@ -48,7 +48,7 @@ module.exports.forgot = async (req,res)=>{
      let userInfo = req.body,err,user
      [err,user] = await to(authService.changePassByCode(userInfo))
      if (err){
-         ReE(res,err,status.NOT_ACCEPTABLE)
+       return  ReE(res,err,status.NOT_ACCEPTABLE)
      }
      var dataResponse = {}
      dataResponse.message = "Change password successfully"
@@ -58,4 +58,12 @@ module.exports.forgot = async (req,res)=>{
 
  module.exports.changePassword = async (req,res)=>{
           
+ }
+ module.exports.getAllUser = async (req,res) =>{
+    let err,users 
+    [err,users] = await to(authService.getAllUser())
+    if (err){
+        return ReE(res,err.message,status.NOT_IMPLEMENTED)
+    }
+    return ReS(res,users,status.OK)
  }

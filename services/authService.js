@@ -22,16 +22,16 @@ const createUser = async (userInfo) => {
 module.exports.createUser = createUser
 
 const authUser = async function (userInfo) {
-    if (!userInfo.email) TE('Please enter email to login')
-    if (!userInfo.password) TE('Please enter password to login')
-    let user
-    [err, user] = await to(User.findOne({ where: { email: userInfo.email } }))
+    if (!userInfo.email) TE('Please enter email to login');
+    if (!userInfo.password) TE('Please enter password to login');
+    let user;
+    [err, user] = await to(User.findOne({ where: { email: userInfo.email } }));
     if (!user) {
-        TE('Not register')
+        TE('Not register');
     }
     [err, user] = await to(user.comparePassword(userInfo.password))
     if (err) {
-        TE(err.message)
+        TE(err.message);
     }
     return user
 }
@@ -87,6 +87,15 @@ module.exports.changePassByCode = changePassByCode
 
 // change password in case  normal
 var changePassword = async (user,newPass)=>{
-    let user,data
 
 }
+
+var getAllUser = async ()=>{
+    let users;
+    [err,users] = await to (User.findAll())
+    if (err) {
+        TE(err.message)
+    }
+    return users
+}
+module.exports.getAllUser = getAllUser
