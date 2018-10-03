@@ -37,7 +37,7 @@ const authUser = async function (userInfo) {
 }
 module.exports.authUser = authUser
 
-const forgotPass = async (userEmail) => {
+var forgotPass = async (userEmail) => {
     if (!userEmail) {
         TE("please enter email");
     }
@@ -59,12 +59,12 @@ const forgotPass = async (userEmail) => {
 }
 module.exports.forgotPass = forgotPass
 
-const changePassByCode = async (userInfo) => {
+var changePassByCode = async (userInfo) => {
     let inputEmail = userInfo.email, code = userInfo.code
     if (!inputEmail) {
         TE("email is null, please enter!")
     }
-    var user,err
+    let user,err
     [err, user] = await to(User.findOne({ where: { email: inputEmail } }))
     if (err) {
         TE(err.message)
@@ -75,14 +75,18 @@ const changePassByCode = async (userInfo) => {
     if (user.codeExp < Date.now()) {
         TE("Code is expired")
     }
-    var passHashed,err;
-    [err,passHashed] = await to (hashPassword(userInfo.password));
-    if (err){ 
-        TE(err.message);
+    let dataUpdate = {password:userInfo.password,code:0,codeExp:0}
+    user.set(dataUpdate)
+    [err, user] = await to(user.save())
+    if (err){
+        TE(err.message)
     }
-    [err, user] = await to(User.update({ password: passHashed, code: 0, codeExp: 0 },
-        { returning: true, where: { id: user.id } }))
     return user
-
 }
 module.exports.changePassByCode = changePassByCode
+
+// change password in case  normal
+var changePassword = async (user,newPass)=>{
+    let user,data
+
+}

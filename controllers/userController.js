@@ -55,3 +55,7 @@ module.exports.forgot = async (req,res)=>{
      dataResponse.email = user.email
      return ReS(res,dataResponse,status.OK)
  }
+
+ module.exports.changePassword = async (req,res)=>{
+          
+ }
