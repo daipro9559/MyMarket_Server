@@ -8,7 +8,7 @@ const CONFIG = require('../config/conf');
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
-    id: {
+    userID: {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
@@ -43,6 +43,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   });
   User.associate = function (models) {
+    this.hasMany(models.Item,{foreignKey: 'userID',as: 'Items'})
     // associations can be defined here
   };
 
@@ -71,7 +72,7 @@ module.exports = (sequelize, DataTypes) => {
 
   User.prototype.getJWT = function(){
     let exp_time = parseInt(CONFIG.jwt_expiration);
-    return "Bearer " + jwt.sign({ user_id: this.id }, CONFIG.jwt_encryption, { expiresIn: exp_time });
+    return "Bearer " + jwt.sign({ user_id: this.userID }, CONFIG.jwt_encryption, { expiresIn: exp_time });
   };
   User.prototype.toWeb = function(){
     let json = this.toJSON();

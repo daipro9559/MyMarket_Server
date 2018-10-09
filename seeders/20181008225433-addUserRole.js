@@ -2,6 +2,10 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
+    return queryInterface.bulkInsert('UserRoles',[
+      {userRoleName:'User'},
+      {userRoleName:'Admin'}
+    ])
     /*
       Add altering commands here.
       Return a promise to correctly handle asynchronicity.

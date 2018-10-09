@@ -14,6 +14,7 @@ const createUser = async (userInfo) => {
     if (!email) TE('An email or phone number was not entered.');
     if (validator.isEmail(email)) {
         var err, user
+        userInfo.userRoleID = 2;// default as UserRole
         [err, user] = await to(User.create(userInfo))
         if (err) TE(err.message);
         return user
@@ -51,7 +52,7 @@ var forgotPass = async (userEmail) => {
     var codeExp = Date.now() + CONFIG.code_expiration
     user.code = code
     user.codeExp = codeExp
-    [err, user] = await to(User.update({ code: code, codeExp: codeExp }, { returning: true, where: { id: user.id } }))
+    [err, user] = await to(User.update({ code: code, codeExp: codeExp }, { returning: true, where: { userID: user.userID } }))
     if (err) {
         TE(err)
     }
@@ -86,7 +87,22 @@ var changePassByCode = async (userInfo) => {
 module.exports.changePassByCode = changePassByCode
 
 // change password in case  normal
-var changePassword = async (user,newPass)=>{
-    let user,data
-
+const changePassword = async (user,userInput)=>{
+    // let user,data
+    let oldPass = userInput.oldPass,newPass = userInput.newPass
+    let err,result
+    [err,result] = await to( user.comparePassword(oldPass))
+    if (err) {
+        TE(err)
+    }
+    if (!result){
+        TE("password incorrect!")
+    }
+    user.set({password:newPass})
+    [err,user] = await to(user.save())
+    if (err) {
+        TE(err)
+    }
+    return true
 }
+module.exports.changePassword = changePassword

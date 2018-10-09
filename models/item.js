@@ -1,11 +1,30 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Item = sequelize.define('Item', {
-    name: DataTypes.STRING,
-    price: DataTypes.INTEGER
+    itemID:{
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: DataTypes.INTEGER
+    },
+    name: {
+      type:DataTypes.STRING,
+      allowNull:false
+    },
+    price: {
+      type:DataTypes.INTEGER
+    },
+    description:{
+      type:DataTypes.TEXT({length:'medium'})
+    },
+    imagePath:{
+      type:DataTypes.TEXT({length:'medium'}),
+      allowNull:false
+    }
   }, {});
   Item.associate = function(models) {
     // associations can be defined here
+    Item.belongsTo(models.Address, {foreignKey: 'addressID'})
   };
   return Item;
 };
