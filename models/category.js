@@ -7,8 +7,13 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       type: DataTypes.INTEGER
     },
-    categoryName: DataTypes.STRING
-  }, {});
+    categoryName: DataTypes.STRING,
+    imagePath:{
+      type:DataTypes.STRING,
+      allowNull:false
+    }
+  }, 
+  {});
   Category.associate = function(models) {
     this.hasMany(models.Item, {foreignKey: 'categoryID'})
     // associations can be defined here
