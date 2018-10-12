@@ -20,6 +20,10 @@ module.exports = (sequelize, DataTypes) => {
     imagePath:{
       type:DataTypes.TEXT({length:'medium'}),
       allowNull:false
+    },
+    needToSale:{
+      type:DataTypes.BOOLEAN,
+      defaultValue: true
     }
   }, {});
   Item.associate = function(models) {

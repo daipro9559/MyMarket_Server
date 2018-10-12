@@ -12,3 +12,8 @@ const getAllCategory = async (req,res)=>{
     return ReS(res,categories,status.OK)
 }
 module.exports.getAllCategory = getAllCategory
+
+const createItem = async (req,res)=>{
+
+}
+module.exports.createItem = createItem

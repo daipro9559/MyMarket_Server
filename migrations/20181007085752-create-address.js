@@ -1,27 +1,27 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Addresses', {
-      addressID: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER
-      },
-      address: {
-        type: Sequelize.STRING
-      },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      }
-    });
+    // return queryInterface.createTable('Addresses', {
+    //   addressID: {
+    //     allowNull: false,
+    //     autoIncrement: true,
+    //     primaryKey: true,
+    //     type: Sequelize.INTEGER
+    //   },
+    //   address: {
+    //     type: Sequelize.STRING
+    //   },
+    //   createdAt: {
+    //     allowNull: false,
+    //     type: Sequelize.DATE
+    //   },
+    //   updatedAt: {
+    //     allowNull: false,
+    //     type: Sequelize.DATE
+    //   }
+    // });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Addresses');
+    // return queryInterface.dropTable('Addresses');
   }
 };

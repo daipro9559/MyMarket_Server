@@ -14,12 +14,12 @@ module.exports = {
     */
    return queryInterface.bulkInsert('Provinces',[
      {
-      name: 'Hà Nội',
+      provinceName: 'Hà Nội',
       createdAt:new Date(),
       updatedAt:new Date()
      }
    ],{}).then(()=>{
-     queryInterface.bulkInsert('Districts',[
+     return queryInterface.bulkInsert('Districts',[
        {
          districtName:'Quận Ba Đình',
          provinceID:1,
