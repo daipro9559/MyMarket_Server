@@ -12,3 +12,7 @@ const getCategories = async()=>{
     return categories
 }
 module.exports.getCategories = getCategories
+
+const createItem = async (req,res)=>{
+    
+}
