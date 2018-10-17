@@ -13,8 +13,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {});
   District.associate = function(models) {
-    this.hasMany(models.Address)
-    this.belongsTo(models.Province)
+    this.hasMany(models.Address,{foreignKey: 'districtID'})
+    this.belongsTo(models.Province,{foreignKey: 'provinceID'})
     // associations can be defined here
   };
   return District;

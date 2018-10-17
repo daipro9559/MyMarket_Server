@@ -1,5 +1,5 @@
 const validator = require('validator')
-const { to, TE } = require('../services/utilService')
+const { to, TE } = require('./utilService')
 const { User } = require('../models')
 const SendMailHelper = require('../helper/sendMail')
 const CONFIG = require('../config/conf')
@@ -117,3 +117,13 @@ const changePassword = async (user,userInput)=>{
     return true
 }
 module.exports.changePassword = changePassword
+
+const getPhoneSeller = async (sellerID)=>{
+    let err,user
+    [err,user] = await to(User.findOne({where:{userID:sellerID}}))
+    if (err){
+        TE(err)
+    }
+    return user
+}
+module.exports.getPhoneSeller = getPhoneSeller

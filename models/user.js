@@ -35,8 +35,13 @@ module.exports = (sequelize, DataTypes) => {
     password: {
       type: DataTypes.STRING,
     },
+    userType:{
+      type:DataTypes.INTEGER,
+      allowNull:false,
+      defaultValue: 0 // 0: user is person,1 user -> seller
+    },
     code:{
-      type:DataTypes.INTEGER
+      type:DataTypes.INTEGER,
     },
     codeExp:{
       type:DataTypes.INTEGER	

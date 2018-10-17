@@ -28,7 +28,8 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   Item.associate = function(models) {
     // associations can be defined here
-    Item.belongsTo(models.Address, {foreignKey: 'addressID'})
+    this.belongsTo(models.Category,{foreignKey:'categoryID'})
+    this.belongsTo(models.Address, {foreignKey: 'addressID'})
   };
   return Item;
 };

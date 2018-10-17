@@ -13,8 +13,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {});
   Address.associate = function(models) {
-    
     // associations can be defined here
+    this.belongsTo(models.District,{foreignKey: 'districtID'})
   };
   return Address;
 };

@@ -3,9 +3,11 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.addColumn(
-      'Items',
-      'needToSale',{
-        type:Sequelize.BOOLEAN // true -> need sale, false -> need buy
+      'Users',
+      'userType',{
+        type:Sequelize.INTEGER, // true -> need sale, false -> need buy
+        allowNull:false,
+        defaultValue:0
       }
     )
   },
@@ -13,7 +15,7 @@ module.exports = {
   down: (queryInterface, Sequelize) => {
     return queryInterface.removeColumn(
       'Items', // name of Source model
-      'needToSale' // key we want to remove
+      'userType' // key we want to remove
     )
   }
 };

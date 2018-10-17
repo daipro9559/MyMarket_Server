@@ -16,7 +16,7 @@ module.exports.getAllProvince = getAllProvince
 
 const getAllDistrict = async(provinceId) =>{
     let err,districts
-    [err,districts] = await to(District.findAll({ where: { ProvinceProvinceID: provinceId } }))
+    [err,districts] = await to(District.findAll({ where: { provinceID: provinceId } }))
     if (err){
         TE(err.message)
     }

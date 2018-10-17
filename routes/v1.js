@@ -7,6 +7,7 @@ const passport = require('passport')
 const path = require('path')
 require('../middleware/passport')(passport)
 router.use(express.static('public'))
+router.use(express.static('files'))
 router.get('/', function(req, res, next) {
     res.json({status:"success", message:"Parcel Pending API", data:{"version_number":"v1.0.0"}})
   });
@@ -16,8 +17,10 @@ router.get('/', function(req, res, next) {
   router.post('/user/forgot', userController.forgot)
   router.post('/user/changePassByCode',userController.changePassByCode)
   router.post('/user/changePass',passport.authenticate('jwt', {session:false}),userController.changePassword)
+  router.get('/user/phone',passport.authenticate('jwt', {session:false}),userController.getPhoneSeller)
   //item case
   router.get('/categories',passport.authenticate('jwt', {session:false}),itemController.getAllCategory)
+  router.get('/items',passport.authenticate('jwt',{session:false}),itemController.getItems)
 
   // address case
   router.get('/provinces',passport.authenticate('jwt', {session:false}),addressController.getAllProvince)
