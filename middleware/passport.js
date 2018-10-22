@@ -8,6 +8,7 @@ module.exports = (passport) => {
     var opts = {}
     opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken()
     opts.secretOrKey = CONFIG.jwt_encryption
+    
     passport.use(new JWTStrategy(opts, async (jwt_payload, done) => {
         let err, user
         [err, user] = await to(User.findById(jwt_payload.user_id))

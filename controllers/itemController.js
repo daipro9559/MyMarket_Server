@@ -9,21 +9,21 @@ const getAllCategory = async (req,res)=>{
     if (err){
         return ReE(res,err,status.NOT_ACCEPTABLE)
     }
-    return ReS(res,categories,status.OK,"get categories success")
+    return ReS(res,categories,status.OK)
 }
 module.exports.getAllCategory = getAllCategory
 
 const addItem = async (req,res)=>{
-    let err,item
+    let err, item
+    return ReS(res,req.user,status.OK,"upload completed")
 }
 module.exports.addItem = addItem
 
-const getItems = async (req,res)=>{
-    let err,items 
-    [err,items] = await to (itemService.getItems(req))
-    if (err){
-        return ReE(res,err,status.NOT_IMPLEMENTED)
+const getItems =async (req,res)=>{
+    let categoryID = req.categoryID
+    if (!categoryID){
+        return ReE(res,"fail to execute action",status.UNPROCESSABLE_ENTITY)
     }
-    return ReS(res,items,status.OK)
-} 
-module.exports.getItems= getItems
+    
+}
+module.exports.getItems = getItems
