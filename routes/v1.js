@@ -21,6 +21,7 @@ router.get('/', function(req, res, next) {
   //item case
   router.get('/categories',passport.authenticate('jwt', {session:false}),itemController.getAllCategory)
   router.get('/items',passport.authenticate('jwt',{session:false}),itemController.getItems)
+  router.post('/items',passport.authenticate('jwt',{session:false}),itemController.addItem)
 
   // address case
   router.get('/provinces',passport.authenticate('jwt', {session:false}),addressController.getAllProvince)

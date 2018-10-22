@@ -14,7 +14,7 @@ const getAllCategory = async (req,res)=>{
 module.exports.getAllCategory = getAllCategory
 
 const addItem = async (req,res)=>{
-
+    let err,item
 }
 module.exports.addItem = addItem
 
