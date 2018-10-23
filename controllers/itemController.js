@@ -15,6 +15,7 @@ module.exports.getAllCategory = getAllCategory
 
 const addItem = async (req,res)=>{
     let err, item
+    let imageFile = req.files.image
     return ReS(res,req.user,status.OK,"upload completed")
 }
 module.exports.addItem = addItem
