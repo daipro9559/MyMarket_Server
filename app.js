@@ -8,7 +8,8 @@ var methodOverride = require('method-override')
 const v1    = require('./routes/v1')
 const CONFIG = require('./config/conf')
 const pe = require('parse-error')
-
+const fileUpload = require('express-fileupload');
+app.use(fileUpload());
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({
     extended: false

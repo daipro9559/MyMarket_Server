@@ -24,3 +24,7 @@ const getAllDistrict = async(provinceId) =>{
 
 }
 module.exports.getAllDistrict = getAllDistrict
+
+var createAddress = async (address)=>{
+    
+}
