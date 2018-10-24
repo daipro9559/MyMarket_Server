@@ -17,7 +17,7 @@ module.exports = {
         updatedAt:new Date(),
         categoryID:1,
         addressID:1,
-        userID:5,
+        userID:2,
         needToSale:1
       },{
         name: 'Iphone 6S Plus',
@@ -28,7 +28,7 @@ module.exports = {
         updatedAt:new Date(),
         categoryID:1,
         addressID:2,
-        userID:5,
+        userID:2,
         needToSale:1
       },{
         name: 'Sony Xperia z3 veron',
@@ -39,7 +39,7 @@ module.exports = {
         updatedAt:new Date(),
         categoryID:1,
         addressID:3,
-        userID:5,
+        userID:2,
         needToSale:1
       },{
         name: 'Galaxy note edge màn cong',
@@ -50,7 +50,7 @@ module.exports = {
         updatedAt:new Date(),
         categoryID:1,
         addressID:4,
-        userID:5,
+        userID:2,
         needToSale:1
       },{
         name: 'Bán dàn sony HCD-VP100',
@@ -61,7 +61,7 @@ module.exports = {
         updatedAt:new Date(),
         categoryID:1,
         addressID:5,
-        userID:5,
+        userID:2,
         needToSale:1
       },{
         name: 'Bay nhanh màn samsung 19',
@@ -72,7 +72,7 @@ module.exports = {
         updatedAt:new Date(),
         categoryID:1,
         addressID:6,
-        userID:5,
+        userID:2,
         needToSale:1
       },{
         name: 'Cpu g2030 socket 1155',
@@ -83,7 +83,7 @@ module.exports = {
         updatedAt:new Date(),
         categoryID:1,
         addressID:7,
-        userID:5,
+        userID:2,
         needToSale:1
       },{
         name: 'Xe điện m133',
@@ -94,7 +94,7 @@ module.exports = {
         updatedAt:new Date(),
         categoryID:1,
         addressID:8,
-        userID:5,
+        userID:2,
         needToSale:1
       }
     ], {});

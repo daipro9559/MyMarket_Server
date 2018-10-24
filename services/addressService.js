@@ -25,6 +25,13 @@ const getAllDistrict = async(provinceId) =>{
 }
 module.exports.getAllDistrict = getAllDistrict
 
-var createAddress = async (address)=>{
-    
+var addAddress = async (address)=>{
+    let err, addressed
+    [err,addressed] = await to (Address.create(address))
+    if (err){
+        TE (err.message)
+    }
+    return addressed
+
 }
+module.exports.addAddress = addAddress

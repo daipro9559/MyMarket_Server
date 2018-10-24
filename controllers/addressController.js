@@ -26,3 +26,5 @@ const getAllDistrict = async (req,res) =>{
     return ReS(res,districts,status.OK,"get districts completed")
 }
 module.exports.getAllDistrict = getAllDistrict
+
+

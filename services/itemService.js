@@ -14,10 +14,15 @@ const getCategories = async()=>{
 }
 module.exports.getCategories = getCategories
 
-const createItem = async (item)=>{
-    
+const addItem = async (item)=>{
+    let err, itemAdded
+    [err,itemAdded] = await to (Item.create(item))
+    if (err){
+        TE(err)
+    }
+    return itemAdded
 }
-module.exports.createItem = createItem
+module.exports.addItem = addItem
 
 const getItems = async (queries)=>{
     
