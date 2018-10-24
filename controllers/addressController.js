@@ -28,3 +28,4 @@ const getAllDistrict = async (req,res) =>{
 module.exports.getAllDistrict = getAllDistrict
 
 
+

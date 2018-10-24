@@ -15,20 +15,21 @@ const getAllCategory = async (req,res)=>{
 module.exports.getAllCategory = getAllCategory
 
 const addItem = async (req,res)=>{
-    let err, item={},address={}
-    item.name = req.body.name
-    item.price = req.body.price
-    item.descripton = req.body.descripton
-    item.categoryID = req.body.categoryID
-    item.userID = req.user.userID
-    address.address = req.body.address
-    address.districtID = req.body.districtID
+    let err, item={},address={},body = req.body
+    address.address = body.address
+    address.districtID = body.districtID
+    let addressAdded
     [err,addressAdded] = await to(addressService.addAddress(address))
     if (err){
-        return ReE(res,err,status.NOT_IMPLEMENTED)
+        ReE(res,err,status.NOT_IMPLEMENTED)
     }
+    item.name = body.name
+    item.price = body.price
+    item.description = body.description
+    item.description = body.needToSale
+    item.categoryID = body.categoryID
     item.addressID = addressAdded.addressID
-    let itemAdded 
+    item.userID = req.user.userID
     [err,itemAdded] = await to(itemService.addItem(item))
     if (err){
         ReE(res,err,status.NOT_IMPLEMENTED)
@@ -38,10 +39,11 @@ const addItem = async (req,res)=>{
 module.exports.addItem = addItem
 
 const getItems =async (req,res)=>{
-    let categoryID = req.query.categoryID
+    let categoryID = req.categoryID
     if (!categoryID){
         return ReE(res,"fail to execute action",status.UNPROCESSABLE_ENTITY)
     }
-    
+    let err,items
+    [err,items] = await to(itemService.getItems(categoryID))
 }
 module.exports.getItems = getItems
