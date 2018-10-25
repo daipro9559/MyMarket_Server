@@ -17,9 +17,10 @@ module.exports = (sequelize, DataTypes) => {
     description:{
       type:DataTypes.TEXT({length:'medium'})
     },
-    imagePath:{
-      type:DataTypes.TEXT({length:'medium'}),
-      allowNull:false
+    images:{
+      type:DataTypes.JSON,
+      allowNull:true,
+      defaultValue:null
     },
     needToSale:{
       type:DataTypes.BOOLEAN,

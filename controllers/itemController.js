@@ -3,7 +3,7 @@ const itemService = require('../services/itemService')
 const addressService = require('../services/addressService')
 const { to, ReE, ReS } = require('../services/utilService')
 const status = require('http-status')
-
+const util = require('../helper/util')
 const getAllCategory = async (req,res)=>{
     let err, categories;
     [err,categories] = await to(itemService.getCategories())
@@ -26,24 +26,39 @@ const addItem = async (req,res)=>{
     item.name = body.name
     item.price = body.price
     item.description = body.description
-    item.description = body.needToSale
+    item.needToSale = body.needToSale
     item.categoryID = body.categoryID
     item.addressID = addressAdded.addressID
     item.userID = req.user.userID
+    let itemAdded
+    var files = req.files.image
+    var imagePaths=[]
+    for (var i=0; i < files.length ;i++){
+        var path = util.getImagePath(item.userID,files[i].name)
+        imagePaths.push(path)
+        files[i].mv(path,(err)=>{
+            console.log(err)
+        })
+    }
+    item.images = JSON.stringify(imagePaths);//convert array image path to json
     [err,itemAdded] = await to(itemService.addItem(item))
     if (err){
-        ReE(res,err,status.NOT_IMPLEMENTED)
+       return ReE(res,err,status.NOT_IMPLEMENTED)
     }
     return ReS(res,itemAdded,status.OK,"add item completed")
 }
 module.exports.addItem = addItem
 
 const getItems =async (req,res)=>{
-    let categoryID = req.categoryID
+    let categoryID = req.query.categoryID
     if (!categoryID){
         return ReE(res,"fail to execute action",status.UNPROCESSABLE_ENTITY)
     }
     let err,items
-    [err,items] = await to(itemService.getItems(categoryID))
+    [err,items] = await to(itemService.getItems(req.query))
+    if (err){
+        return ReE(res,err,status.NOT_IMPLEMENTED)
+    }
+    return ReS(res,items,status.OK)
 }
 module.exports.getItems = getItems

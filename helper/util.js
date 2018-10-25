@@ -1,7 +1,8 @@
 'use strict'
 const bcrypt = require('bcrypt')
 const {to}  = require('../services/utilService')
-
+const CONFIG = require('../config/conf')
+const fs = require('fs')
 
 // it random code from 100000-999999
 const randomCode = function randomCode(){
@@ -12,7 +13,7 @@ const randomCode = function randomCode(){
 
   module.exports.randomCode = randomCode
 
-  const hashPassword = async function(pw){
+  const hashPassword = async (pw)=>{
     var salt, hash,err;
     [err, salt] = await to(bcrypt.genSalt(10));
     if (err) TE(err.message, true);
@@ -21,5 +22,21 @@ const randomCode = function randomCode(){
     return hash;
   }
   module.exports.hashPassword = hashPassword
+
+  var getImagePath = (userID,fileName) =>{
+    var date = new Date()
+    var month = date.getMonth() + 1
+    var year = date.getFullYear()
+    var day = date.getDate()
+    var pathDir = CONFIG.image_item_path + year + '/' + month + '/' + day + "/"
+    var fileExtension = fileName.split(".")[1];
+    var newFileName = userID + "-" + Date.now() +"."+fileExtension
+    var fullPathImage = pathDir + newFileName
+    if (!fs.existsSync(pathDir)){
+      fs.mkdirSync(pathDir)
+    }
+    return fullPathImage
+  }
+  module.exports.getImagePath = getImagePath
 
 

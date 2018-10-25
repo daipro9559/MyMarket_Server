@@ -25,6 +25,13 @@ const addItem = async (item)=>{
 module.exports.addItem = addItem
 
 const getItems = async (queries)=>{
-    
+    if (queries.categoryID ==0){
+    }
+    let err, items
+    [err,items] = await to(Item.findAll())
+    if (err){
+        TE(err)
+    }
+    return items
 }
 module.exports.getItems = getItems
