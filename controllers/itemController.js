@@ -31,18 +31,18 @@ const addItem = async (req,res)=>{
     item.addressID = addressAdded.addressID
     item.userID = req.user.userID
     let itemAdded
-    if (req.files) {
-        var files = req.files.image
-         var imagePaths=[]
-          for (var i=0; i < files.length ;i++){
-              var path = util.getImagePath(item.userID,files[i].name)
-              imagePaths.push(path)
-               files[i].mv(path,(err)=>{
-                    console.log(err)
-                })
-            }
-         item.images = JSON.stringify(imagePaths);//convert array image path to json
-        }
+
+    var files = req.files.image
+    var imagePath=[],imagePathApi=[]
+    for (var i=0; i < files.length ;i++){
+        var path = util.getImagePath(item.userID,files[i].name)
+        imagePath.push(path)
+        imagePathApi.push(path.substr(7,path.length))
+        files[i].mv(path,(err)=>{
+            console.log(err)
+        })
+    }
+    item.images = JSON.stringify(imagePathApi);//convert array image path to json
     [err,itemAdded] = await to(itemService.addItem(item))
     if (err){
        return ReE(res,err,status.NOT_IMPLEMENTED)
@@ -57,7 +57,8 @@ const getItems =async (req,res)=>{
         return ReE(res,"fail to execute action",status.UNPROCESSABLE_ENTITY)
     }
     let err,items
-    [err,items] = await to(itemService.getItems(req.query))
+   
+    [err,items] = await to(itemService.getItems(req.user.userID,req.query))
     if (err){
         return ReE(res,err,status.NOT_IMPLEMENTED)
     }
