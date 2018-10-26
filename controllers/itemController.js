@@ -32,15 +32,16 @@ const addItem = async (req,res)=>{
     item.userID = req.user.userID
     let itemAdded
     var files = req.files.image
-    var imagePaths=[]
+    var imagePath=[],imagePathApi=[]
     for (var i=0; i < files.length ;i++){
         var path = util.getImagePath(item.userID,files[i].name)
-        imagePaths.push(path)
+        imagePath.push(path)
+        imagePathApi.push(path.substr(7,path.length))
         files[i].mv(path,(err)=>{
             console.log(err)
         })
     }
-    item.images = JSON.stringify(imagePaths);//convert array image path to json
+    item.images = JSON.stringify(imagePathApi);//convert array image path to json
     [err,itemAdded] = await to(itemService.addItem(item))
     if (err){
        return ReE(res,err,status.NOT_IMPLEMENTED)

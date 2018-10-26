@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       type:DataTypes.TEXT({length:'medium'})
     },
     images:{
-      type:DataTypes.JSON,
+      type:DataTypes.STRING,
       allowNull:true,
       defaultValue:null
     },

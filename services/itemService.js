@@ -1,7 +1,7 @@
 'use strict'
 const {to,TE} = require('../services/utilService')
 const CONFIG = require('../config/conf')
-const {Category,Item} = require('../models')
+const {Category,Item,Address} = require('../models')
 const multer = require('multer')
 
 const getCategories = async()=>{
@@ -28,7 +28,9 @@ const getItems = async (queries)=>{
     if (queries.categoryID ==0){
     }
     let err, items
-    [err,items] = await to(Item.findAll())
+    [err,items] = await to(Item.findAll( { include: [
+        { model: Address}
+     ]}))
     if (err){
         TE(err)
     }
