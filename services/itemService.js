@@ -32,9 +32,9 @@ const getItems = async (userID,queries)=>{
         { 
         where:{
             categoryID : queries.categoryID,
-            userID :{
-                [Op.ne]: userID
-            }
+            // userID :{
+            //     [userID.ne]: userID
+            // }
         },
         include: [
         { model: Address}
