@@ -21,7 +21,7 @@ const addItem = async (req,res)=>{
     let addressAdded
     [err,addressAdded] = await to(addressService.addAddress(address))
     if (err){
-        ReE(res,err,status.NOT_IMPLEMENTED)
+        return ReE(res,err,status.NOT_IMPLEMENTED)
     }
     item.name = body.name
     item.price = body.price
