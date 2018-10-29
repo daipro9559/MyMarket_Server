@@ -18,11 +18,11 @@ module.exports = (sequelize, DataTypes) => {
       type:DataTypes.TEXT({length:'medium'})
     },
     images:{
-      type:DataTypes.JSON,
+      type:DataTypes.STRING,
       allowNull:true,
       defaultValue:null
     },
-    needToSale:{
+    needToSell:{
       type:DataTypes.BOOLEAN,
       defaultValue: true
     }
@@ -30,6 +30,7 @@ module.exports = (sequelize, DataTypes) => {
   Item.associate = function(models) {
     // associations can be defined here
     this.belongsTo(models.Category,{foreignKey:'categoryID'})
+    this.belongsTo(models.User, {foreignKey:'userID'})
     this.belongsTo(models.Address, {foreignKey: 'addressID'})
   };
   return Item;

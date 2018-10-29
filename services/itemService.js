@@ -1,8 +1,10 @@
 'use strict'
 const {to,TE} = require('../services/utilService')
 const CONFIG = require('../config/conf')
-const {Category,Item} = require('../models')
+const {Category,Item,Address} = require('../models')
 const multer = require('multer')
+const Sequelize = require('sequelize')
+const Op = Sequelize.Op
 
 const getCategories = async()=>{
     let err,categories
@@ -24,11 +26,21 @@ const addItem = async (item)=>{
 }
 module.exports.addItem = addItem
 
-const getItems = async (queries)=>{
+const getItems = async (userID,queries)=>{
     if (queries.categoryID ==0){
     }
     let err, items
-    [err,items] = await to(Item.findAll())
+    [err,items] = await to(Item.findAll(
+        { 
+        where:{
+            categoryID : queries.categoryID,
+            userID :{
+                [Op.ne]: userID
+            }
+        },
+        include: [
+        { model: Address}
+     ]}))
     if (err){
         TE(err)
     }
