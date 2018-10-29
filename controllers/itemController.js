@@ -57,7 +57,9 @@ const addItem = async (req,res)=>{
     if (err){
        return ReE(res,err,status.NOT_IMPLEMENTED)
     }
-    return ReS(res,itemAdded,status.OK,"add item completed")
+    let data = {}
+    data.itemID = itemAdded.itemID
+    return ReS(res,data,status.OK,"add item completed")
 }
 module.exports.addItem = addItem
 
