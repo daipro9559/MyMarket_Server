@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull:true,
       defaultValue:null
     },
-    needToSale:{
+    needToSell:{
       type:DataTypes.BOOLEAN,
       defaultValue: true
     }

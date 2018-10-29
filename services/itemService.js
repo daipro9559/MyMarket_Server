@@ -3,6 +3,8 @@ const {to,TE} = require('../services/utilService')
 const CONFIG = require('../config/conf')
 const {Category,Item,Address} = require('../models')
 const multer = require('multer')
+const Sequelize = require('sequelize')
+const Op = Sequelize.Op
 
 const getCategories = async()=>{
     let err,categories
@@ -32,9 +34,9 @@ const getItems = async (userID,queries)=>{
         { 
         where:{
             categoryID : queries.categoryID,
-            // userID :{
-            //     [userID.ne]: userID
-            // }
+            userID :{
+                [Op.ne]: userID
+            }
         },
         include: [
         { model: Address}
