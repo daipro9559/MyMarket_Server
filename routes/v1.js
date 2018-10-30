@@ -34,6 +34,9 @@ router.get('/', function(req, res, next) {
   router.post('/user/changePassByCode',userController.changePassByCode)
   router.post('/user/changePass',passport.authenticate('jwt', {session:false}),userController.changePassword)
   router.get('/user/phone',passport.authenticate('jwt', {session:false}),userController.getPhoneSeller)
+//user case
+router.get('/user/profile',passport.authenticate('jwt', {session:false}),userController.getProfile)
+
   //item case
   router.get('/categories',passport.authenticate('jwt', {session:false}),itemController.getAllCategory)
   router.get('/items',passport.authenticate('jwt',{session:false}),itemController.getItems)

@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull:false
     },
     price: {
-      type:DataTypes.INTEGER
+      type:DataTypes.BIGINT(11)
     },
     description:{
       type:DataTypes.TEXT({length:'medium'})

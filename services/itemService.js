@@ -27,21 +27,35 @@ const addItem = async (item)=>{
 module.exports.addItem = addItem
 
 const getItems = async (userID,queries)=>{
-    if (queries.categoryID ==0){
+    let whereItem={},whereAddress={}
+    whereItem.userID={
+        [Op.ne]: userID
+    }
+    if (queries.categoryID){
+        whereItem.categoryID = queries.categoryID
+    }
+    if (queries.name){
+        let queryName = "%"+queries.name+"%"
+        whereItem.name={
+            [Op.like]: queryName
+        }
     }
     let err, items
-    [err,items] = await to(Item.findAll(
-        { 
-        where:{
-            categoryID : queries.categoryID,
-            userID :{
-                [Op.ne]: userID
-            }
-        },
-        include: [
-        { model: Address}
-     ]}))
-    if (err){
+    [err, items] = await to(Item.findAll(
+        {
+            where: whereItem
+            // where:{
+            // categoryID : queries.categoryID,
+            // userID :{
+            //     [Op.ne]: userID
+            // }
+            // }
+            ,
+            include: [
+                { model: Address }
+            ]
+        }))
+    if (err) {
         TE(err)
     }
     return items

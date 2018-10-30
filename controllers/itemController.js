@@ -52,6 +52,8 @@ const addItem = async (req,res)=>{
             })
         }
         item.images = JSON.stringify(imagePathApi);//convert array image path to json
+    }else{
+        item.images = JSON.stringify([])
     }
     [err,itemAdded] = await to(itemService.addItem(item))
     if (err){

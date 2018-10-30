@@ -69,7 +69,7 @@ module.exports.changePassword = async (req, res) => {
 const getPhoneSeller = async (req,res)=>{
     let sellerId = req.query.sellerID
     let err,user
-    [err,user] = await to(userService.getPhoneSeller(sellerId))
+    [err,user] = await to(userService.getProfile(sellerId))
     if (err){
         return ReE(res,err,status.NOT_FOUND)
     }
@@ -78,3 +78,15 @@ const getPhoneSeller = async (req,res)=>{
     return ReS(res,data,status.OK)
 }
 module.exports.getPhoneSeller = getPhoneSeller
+
+const getProfile = async (req,res)=>{
+    let err, user
+    [err,user] = await to (userService.getProfile(req.user.userID))
+    if (err){
+        return ReE(res,err.message,status.NOT_IMPLEMENTED)
+    }
+    user.password =""
+
+    return ReS(res,user.toWeb(),status.OK)
+}
+module.exports.getProfile = getProfile

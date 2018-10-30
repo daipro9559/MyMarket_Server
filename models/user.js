@@ -45,6 +45,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     codeExp:{
       type:DataTypes.INTEGER	
+    },
+    avatar:{
+      type: DataTypes.STRING,
+      allowNull:true
     }
   });
   User.associate = function (models) {

@@ -26,7 +26,7 @@ const authUser = async function (userInfo) {
     if (!userInfo.email) TE('Please enter email to login');
     if (!userInfo.password) TE('Please enter password to login');
     let user;
-    [err, user] = await to(User.findOne({ where: { email: userInfo.email } }));
+    [err, user] = await to(User.findOne({ where: { email: userInfo.email }}));
     if (!user) {
         TE('Not register');
     }
@@ -34,6 +34,7 @@ const authUser = async function (userInfo) {
     if (err) {
         TE(err.message);
     }
+    user.password=""
     return user
 }
 module.exports.authUser = authUser
@@ -118,12 +119,13 @@ const changePassword = async (user,userInput)=>{
 }
 module.exports.changePassword = changePassword
 
-const getPhoneSeller = async (sellerID)=>{
+// userID 
+const getProfile = async (userId)=>{
     let err,user
-    [err,user] = await to(User.findOne({where:{userID:sellerID}}))
+    [err,user] = await to(User.findOne({where:{userID:userId}}))
     if (err){
         TE(err)
     }
     return user
 }
-module.exports.getPhoneSeller = getPhoneSeller
+module.exports.getProfile = getProfile
