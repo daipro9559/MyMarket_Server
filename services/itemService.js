@@ -40,6 +40,12 @@ const getItems = async (userID,queries)=>{
             [Op.like]: queryName
         }
     }
+    if (queries.priceMin && queries.priceMax){
+        whereItem.price = {
+            [Op.gte]: queries.priceMin,
+            [Op.lte]: queries.priceMax   
+        }
+    }
     let err, items
     [err, items] = await to(Item.findAll(
         {
