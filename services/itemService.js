@@ -45,6 +45,17 @@ const getItems = async (userID,queries)=>{
             [Op.gte]: queries.priceMin,
             [Op.lte]: queries.priceMax   
         }
+    }else if (queries.priceMax){
+        whereItem.price = {
+            [Op.lte]: queries.priceMax   
+        }
+    }else if (queries.priceMin){
+        whereItem.price = {
+            [Op.gte]: queries.priceMin,
+        }
+    }
+    if (queries.needToSell){
+        whereItem.needToSell = queries.needToSell
     }
     let err, items
     [err, items] = await to(Item.findAll(
@@ -58,7 +69,9 @@ const getItems = async (userID,queries)=>{
             // }
             ,
             include: [
-                { model: Address }
+                { 
+                    model: Address 
+                }
             ]
         }))
     if (err) {
