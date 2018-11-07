@@ -67,9 +67,9 @@ module.exports.addItem = addItem
 
 const getItems =async (req,res)=>{
     let categoryID = req.query.categoryID
-    if (!categoryID){
-        return ReE(res,"fail to execute action",status.UNPROCESSABLE_ENTITY)
-    }
+    // if (!categoryID){
+    //     return ReE(res,"fail to execute action",status.UNPROCESSABLE_ENTITY)
+    // }
     let err,items
    
     [err,items] = await to(itemService.getItems(req.user.userID,req.query))

@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt')
 const {to}  = require('../services/utilService')
 const CONFIG = require('../config/conf')
 const fs = require('fs')
+const mkdirp = require('mkdirp');
 
 // it random code from 100000-999999
 const randomCode = function randomCode(){
@@ -33,7 +34,7 @@ const randomCode = function randomCode(){
     var newFileName = userID + "-" + Date.now() +"."+fileExtension
     var fullPathImage = pathDir + newFileName
     if (!fs.existsSync(pathDir)){
-      fs.mkdirSync(pathDir)
+      mkdirp.sync(pathDir)
     }
     return fullPathImage
   }
