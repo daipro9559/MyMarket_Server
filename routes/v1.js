@@ -36,14 +36,18 @@ router.get('/', function(req, res, next) {
   router.get('/user/phone',passport.authenticate('jwt', {session:false}),userController.getPhoneSeller)
 //user case
 router.get('/user/profile',passport.authenticate('jwt', {session:false}),userController.getProfile)
+router.post('/user/updateToSeller',passport.authenticate('jwt', {session:false}),userController.updateToSeller)
 
   //item case
   router.get('/categories',passport.authenticate('jwt', {session:false}),itemController.getAllCategory)
   router.get('/items',passport.authenticate('jwt',{session:false}),itemController.getItems)
   router.post('/items',passport.authenticate('jwt',{session:false}),itemController.addItem)
+  router.post('/items/mark',passport.authenticate('jwt',{session:false}),itemController.markItem)
+  router.get('/items/mark',passport.authenticate('jwt',{session:false}),itemController.getMarkedItems)
+  router.delete('/items/mark/:itemId',passport.authenticate('jwt',{session:false}),itemController.unMarkItem)
 
   // address case
   router.get('/provinces',passport.authenticate('jwt', {session:false}),addressController.getAllProvince)
   router.get('/provinces/:provinceID/districts',passport.authenticate('jwt', {session:false}),addressController.getAllDistrict)
-  
+  //stand case...................................
   module.exports = router;

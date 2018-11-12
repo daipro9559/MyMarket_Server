@@ -10,9 +10,10 @@ module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define('User', {
     userID: {
       allowNull: false,
-      autoIncrement: true,
+      unique: true,
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
-      type: DataTypes.INTEGER
+      type: DataTypes.UUID
     },
     name: DataTypes.STRING,
     email: {
@@ -51,9 +52,14 @@ module.exports = (sequelize, DataTypes) => {
       allowNull:true
     }
   });
+  // ưu tiên bảng nối item dánh dấu. boi viet cau truy van se dai hon
   User.associate = function (models) {
+        // associations can be defined here
     this.hasMany(models.Item,{foreignKey: 'userID',as: 'Items'})
-    // associations can be defined here
+    this.hasMany(models.Stand,{foreignKey: 'userID',as: 'Stands'})
+    this.hasMany(models.UserItemMarked,{foreignKey: 'userID'})
+
+    // this.belongsToMany(models.Item,{through:'UserItemMarked'})// 
   };
 
   User.beforeSave(async function (user, options){

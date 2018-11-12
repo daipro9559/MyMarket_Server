@@ -90,3 +90,13 @@ const getProfile = async (req,res)=>{
     return ReS(res,user.toWeb(),status.OK)
 }
 module.exports.getProfile = getProfile
+
+var updateToSeller = async (req,res)=>{
+    let err,result 
+    [err,result] = await to(userService.updateToSeller(req.user))
+    if (err){
+        return ReE(res,err,status.NOT_IMPLEMENTED)
+    }
+    return ReS(res,null,status.OK,"update to seller completed")
+}
+module.exports.updateToSeller = updateToSeller

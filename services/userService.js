@@ -11,7 +11,7 @@ const createUser = async (userInfo) => {
     auth_info = {}
     auth_info.status = 'create'
     email = userInfo.email
-    if (!email) TE('An email or phone number was not entered.');
+    if (!email) TE('An email was not entered.');
     if (validator.isEmail(email)) {
         var err, user
         userInfo.userRoleID = 2;// default as UserRole
@@ -129,3 +129,11 @@ const getProfile = async (userId)=>{
     return user
 }
 module.exports.getProfile = getProfile
+
+var updateToSeller = async (user)=>{
+    let err,userUpdate
+    [err,userUpdate] = await to(user.update({userType:1}))
+    if (err){ TE (err)}
+    return true
+}
+module.exports.updateToSeller = updateToSeller

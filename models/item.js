@@ -3,9 +3,10 @@ module.exports = (sequelize, DataTypes) => {
   const Item = sequelize.define('Item', {
     itemID:{
       allowNull: false,
-      autoIncrement: true,
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
-      type: DataTypes.INTEGER
+      type: DataTypes.UUID,
+      unique:true
     },
     name: {
       type:DataTypes.STRING,
@@ -32,6 +33,10 @@ module.exports = (sequelize, DataTypes) => {
     this.belongsTo(models.Category,{foreignKey:'categoryID'})
     this.belongsTo(models.User, {foreignKey:'userID'})
     this.belongsTo(models.Address, {foreignKey: 'addressID'})
+    this.belongsTo(models.Stand,{foreignKey:'standID'})
+    this.hasMany(models.UserItemMarked,{foreignKey: 'itemID'})
+
+    // this.belongsToMany(models.User,{through:'UserItemMarked'})
   };
   return Item;
 };

@@ -79,3 +79,38 @@ const getItems =async (req,res)=>{
     return ReS(res,items,status.OK)
 }
 module.exports.getItems = getItems
+
+// marked item 
+var markItem = async (req,res)=>{
+    let err,userItem
+    if (!req.body.itemID){
+        return ReE(res," not select item",status.NOT_IMPLEMENTED)
+    }
+   [err,userItem] = await to (itemService.markItem(req.user.userID,req.body.itemID))
+   if (err){
+    return ReE(res,err,status.NOT_IMPLEMENTED)
+   }
+   
+   return ReS(res,userItem,status.OK)
+}
+module.exports.markItem = markItem
+
+var getMarkedItems = async(req,res)=>{
+    let err,items 
+    [err,items] = await to(itemService.getItemsMarked(req.user))
+    if(err){
+        return ReE(res,err,status.NOT_IMPLEMENTED)
+    }
+    return ReS(res,items,status.OK)
+}
+module.exports.getMarkedItems = getMarkedItems
+
+var unMarkItem = async (req,res)=>{
+    let err, result
+    [err,result] = await to(itemService.unMarkItem(req.user.userID,req.params.itemId))
+    if (err){
+        return ReE(res,err,status.NOT_FOUND)
+    }
+    return ReS(res,null,status.OK,"unmarked completed")
+}
+module.exports.unMarkItem = unMarkItem

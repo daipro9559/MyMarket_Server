@@ -4,9 +4,8 @@ module.exports = {
     // return queryInterface.createTable('Items', {
     //   itemID: {
     //     allowNull: false,
-    //     autoIncrement: true,
     //     primaryKey: true,
-    //     type: Sequelize.INTEGER
+    //     type: Sequelize.UUID
     //   },
     //   itemName: {
     //     type: Sequelize.STRING

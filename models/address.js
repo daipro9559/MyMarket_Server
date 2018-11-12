@@ -5,6 +5,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
+      unique: true,
       type: DataTypes.INTEGER
       },
     address: {
@@ -14,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   Address.associate = function(models) {
     // associations can be defined here
-    this.belongsTo(models.District,{foreignKey: 'districtID'})
+    this.belongsTo(models.District, {foreignKey: 'districtID'})
   };
   return Address;
 };
