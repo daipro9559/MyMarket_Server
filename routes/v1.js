@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const userController = require('../controllers/userController')
 const itemController = require('../controllers/itemController')
+const standController = require('../controllers/standController')
 const addressController = require('../controllers/addressController')
 const multer = require('multer')
 const passport = require('passport')
@@ -50,4 +51,8 @@ router.post('/user/updateToSeller',passport.authenticate('jwt', {session:false})
   router.get('/provinces',passport.authenticate('jwt', {session:false}),addressController.getAllProvince)
   router.get('/provinces/:provinceID/districts',passport.authenticate('jwt', {session:false}),addressController.getAllDistrict)
   //stand case...................................
-  module.exports = router;
+  //create
+  router.post('/stands',passport.authenticate('jwt',{session:false}),standController.createStand)
+  router.get('/stands',passport.authenticate('jwt', {session:false}),standController.getStands)
+  router.get('/stands/myStands',passport.authenticate('jwt', {session:false}),standController.getMyStands)
+  module.exports = router

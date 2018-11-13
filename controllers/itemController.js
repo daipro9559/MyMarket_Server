@@ -4,6 +4,7 @@ const addressService = require('../services/addressService')
 const { to, ReE, ReS } = require('../services/utilService')
 const status = require('http-status')
 const util = require('../helper/util')
+const CONFIG = require('../config/conf')
 const getAllCategory = async (req,res)=>{
     let err, categories;
     [err,categories] = await to(itemService.getCategories())
@@ -36,7 +37,7 @@ const addItem = async (req,res)=>{
         var imagePath = [], imagePathApi = []
         if (Array.isArray(files)) {
             for (var i = 0; i < files.length; i++) {
-                var path = util.getImagePath(item.userID, files[i].name)
+                var path = util.getImagePath(item.userID, files[i].name,CONFIG.image_item_path)
                 imagePath.push(path)
                 imagePathApi.push(path.substr(7, path.length))
                 files[i].mv(path, (err) => {
@@ -44,7 +45,7 @@ const addItem = async (req,res)=>{
                 })
             }
         } else {
-            var path = util.getImagePath(item.userID, files.name)
+            var path = util.getImagePath(item.userID, files.name,CONFIG.image_item_path)
             imagePath.push(path)
             imagePathApi.push(path.substr(7, path.length))
             files.mv(path, (err) => {
