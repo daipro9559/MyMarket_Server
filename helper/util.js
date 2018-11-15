@@ -41,3 +41,10 @@ const randomCode = function randomCode(){
   module.exports.getImagePath = getImagePath
 
 
+  const checkLastPage = (size)=>{
+    if (size<CONFIG.page_size){
+      return true
+    }
+    return false
+  }
+  module.exports.checkLastPage = checkLastPage

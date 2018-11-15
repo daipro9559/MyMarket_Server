@@ -26,7 +26,7 @@ const addItem = async (item)=>{
 module.exports.addItem = addItem
 
 const getItems = async (userId,queries)=>{
-    let whereItem={},whereAddress={},whereDistrict={},myOrder=[]
+    let whereItem={},whereAddress={},whereDistrict={},myOrder=[],page,limitItem
     whereItem.userID={
         [Op.ne]: userId
     }
@@ -39,7 +39,15 @@ const getItems = async (userId,queries)=>{
             [Op.like]: queryName
         }
     }
-    if(queries)
+    // check page
+    if(!queries.page){
+        TE("not has param page")
+    }else{
+        page = parseInt(queries.page)
+    }
+    if (queries.isNewest != undefined && queries.isNewest == true){
+        myOrder.push(['updatedAt','DESC'])
+    }
     if (queries.isFree){
         whereItem.price = 0
     } else {
@@ -102,7 +110,9 @@ const getItems = async (userId,queries)=>{
                     ]
                 }
             ],
-            order:myOrder
+            order:myOrder,
+            offset: page*CONFIG.page_size, 
+            limit: CONFIG.page_size
         }))
     if (err) {
         TE(err)
@@ -157,3 +167,13 @@ var unMarkItem = async (userId,itemId)=>{
     return true
 }
 module.exports.unMarkItem = unMarkItem
+
+var getUserItemMarked = async (user)=>{
+    let err,userItemsMarked
+    [err,userItemsMarked] = await to(UserItemMarked.findAll({where:{userID:user.userID}}))
+    if (err){
+        TE(err)
+    }
+    return userItemsMarked
+}
+module.exports.getUserItemMarked = getUserItemMarked

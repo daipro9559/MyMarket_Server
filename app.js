@@ -4,6 +4,7 @@ const cors = require('cors')
 const app = express();
 const passport = require('passport')
 var bodyParser = require('body-parser')
+var boolParser = require('express-query-boolean');
 var methodOverride = require('method-override')
 const v1    = require('./routes/v1')
 const CONFIG = require('./config/conf')
@@ -12,8 +13,9 @@ const fileUpload = require('express-fileupload');
 app.use(fileUpload());
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({
-    extended: false
+    extended: true
 }))
+app.use(boolParser());
 app.use(bodyParser.json())
 app.use(methodOverride())
     //Passport

@@ -72,12 +72,26 @@ const getItems =async (req,res)=>{
     //     return ReE(res,"fail to execute action",status.UNPROCESSABLE_ENTITY)
     // }
     let err,items
-   
     [err,items] = await to(itemService.getItems(req.user.userID,req.query))
     if (err){
         return ReE(res,err,status.NOT_IMPLEMENTED)
     }
-    return ReS(res,items,status.OK)
+    //check 
+    let userItemsMarked
+    [err,userItemsMarked] = await to(itemService.getUserItemMarked(req.user))
+    if (err){
+        return ReE(res,err,status.NOT_IMPLEMENTED)
+    }
+    userItemsMarked.forEach(userItemMarked => {
+        items.forEach(item=>{
+            if (item.itemID == userItemMarked.itemID){
+                item.isMarked = true
+            }else{
+                item.isMarked = false
+            }
+        })
+    })
+    return ReS(res,items,status.OK,"get items completed",util.checkLastPage(items.length))
 }
 module.exports.getItems = getItems
 

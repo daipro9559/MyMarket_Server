@@ -18,9 +18,10 @@ module.exports.ReE = (res, err, code) => {
     return res.json({ success: false, message: err })
 };
 // success web response 
-module.exports.ReS = (res, data, code, message ='successfully') => {
+module.exports.ReS = (res, data, code, message ='successfully',isLastPage=true) => {
     let send_data = { success: true }
     send_data.message = message
+    send_data.lastPage = isLastPage
     send_data.data = data
     if (typeof code !== 'undefined') res.statusCode = code
 
