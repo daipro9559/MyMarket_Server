@@ -24,7 +24,6 @@ module.exports.ReS = (res, data, code, message ='successfully',isLastPage=true) 
     send_data.lastPage = isLastPage
     send_data.data = data
     if (typeof code !== 'undefined') res.statusCode = code
-
     return res.json(send_data)
 };
 

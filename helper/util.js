@@ -42,7 +42,7 @@ const randomCode = function randomCode(){
 
 
   const checkLastPage = (size)=>{
-    if (size<CONFIG.page_size){
+    if (size<CONFIG.page_size_item){
       return true
     }
     return false

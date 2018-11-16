@@ -11,7 +11,9 @@ CONFIG.image_item_path = 'public/images/items/'
 CONFIG.image_avatar_path = 'public/images/avatars/'
 CONFIG.image_stand_path = 'public/items/stands/'
 
-CONFIG.page_size = 15
+CONFIG.page_size_item = 15
+CONFIG.page_size_stand = 10
+
 //firebase
 CONFIG.collapse_key="com.example.dainv.mymarket"
 module.exports = CONFIG

@@ -111,8 +111,8 @@ const getItems = async (userId,queries)=>{
                 }
             ],
             order:myOrder,
-            offset: page*CONFIG.page_size, 
-            limit: CONFIG.page_size
+            offset: page*CONFIG.page_size_item, 
+            limit: CONFIG.page_size_item
         }))
     if (err) {
         TE(err)

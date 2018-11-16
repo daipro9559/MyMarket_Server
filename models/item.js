@@ -26,6 +26,10 @@ module.exports = (sequelize, DataTypes) => {
     needToSell:{
       type:DataTypes.BOOLEAN,
       defaultValue: true
+    },
+    isMarked: { // no have column this table, it will use check for item is marked
+      type: DataTypes.VIRTUAL,
+      defaultValue:false
     }
   }, {});
   Item.associate = function(models) {

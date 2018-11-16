@@ -82,12 +82,11 @@ const getItems =async (req,res)=>{
     if (err){
         return ReE(res,err,status.NOT_IMPLEMENTED)
     }
+
     userItemsMarked.forEach(userItemMarked => {
         items.forEach(item=>{
             if (item.itemID == userItemMarked.itemID){
                 item.isMarked = true
-            }else{
-                item.isMarked = false
             }
         })
     })
@@ -116,6 +115,9 @@ var getMarkedItems = async(req,res)=>{
     if(err){
         return ReE(res,err,status.NOT_IMPLEMENTED)
     }
+    items.forEach(item=>{
+        item.isMarked = true
+    })
     return ReS(res,items,status.OK)
 }
 module.exports.getMarkedItems = getMarkedItems
