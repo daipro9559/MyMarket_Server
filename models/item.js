@@ -27,6 +27,10 @@ module.exports = (sequelize, DataTypes) => {
       type:DataTypes.BOOLEAN,
       defaultValue: true
     },
+    isDone:{
+      type:DataTypes.BOOLEAN,
+      defaultValue: false
+    },
     isMarked: { // no have column this table, it will use check for item is marked
       type: DataTypes.VIRTUAL,
       defaultValue:false
@@ -35,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
   Item.associate = function(models) {
     // associations can be defined here
     this.belongsTo(models.Category,{foreignKey:'categoryID'})
-    this.belongsTo(models.User, {foreignKey:'userID'})
+    this.belongsTo(models.User, {foreignKey:'userID',onDelete: 'CASCADE'})
     this.belongsTo(models.Address, {foreignKey: 'addressID'})
     this.belongsTo(models.Stand,{foreignKey:'standID'})
     this.hasMany(models.UserItemMarked,{foreignKey: 'itemID'})

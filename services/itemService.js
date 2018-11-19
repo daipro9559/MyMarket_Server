@@ -15,40 +15,39 @@ const getCategories = async()=>{
 }
 module.exports.getCategories = getCategories
 
-const addItem = async (item)=>{
+const addItem = async (item) => {
     let err, itemAdded
-    [err,itemAdded] = await to (Item.create(item))
-    if (err){
+    [err, itemAdded] = await to(Item.create(item))
+    if (err) {
         TE(err)
     }
     return itemAdded
 }
 module.exports.addItem = addItem
 
-const getItems = async (userId,queries)=>{
-    let whereItem={},whereAddress={},whereDistrict={},myOrder=[],page,limitItem
-    whereItem.userID={
-        [Op.ne]: userId
+const getItems = async (userId, queries) => {
+    let whereItem = {}, whereAddress = {}, whereDistrict = {}, myOrder = [], page
+    if (queries.isMyItems) {
+        whereItem.userID = userId
+    } else {
+        whereItem.userID = {
+            [Op.ne]: userId
+        }
     }
-    if (queries.categoryID){
+    if (queries.categoryID) {
         whereItem.categoryID = queries.categoryID
     }
-    if (queries.name){
-        let queryName = "%"+queries.name+"%"
-        whereItem.name={
+    if (queries.name) {
+        let queryName = "%" + queries.name + "%"
+        whereItem.name = {
             [Op.like]: queryName
         }
     }
-    // check page
-    if(!queries.page){
-        TE("not has param page")
-    }else{
-        page = parseInt(queries.page)
+
+    if (queries.isNewest != undefined && queries.isNewest == true) {
+        myOrder.push(['updatedAt', 'DESC'])
     }
-    if (queries.isNewest != undefined && queries.isNewest == true){
-        myOrder.push(['updatedAt','DESC'])
-    }
-    if (queries.isFree){
+    if (queries.isFree) {
         whereItem.price = 0
     } else {
         if (queries.priceMin && queries.priceMax) {
@@ -65,19 +64,28 @@ const getItems = async (userId,queries)=>{
                 [Op.gte]: queries.priceMin,
             }
         }
-        if (queries.priceDown){
-            myOrder.push(['price','DESC'])
-        }else if (queries.priceUp){
-            myOrder.push( ['price', 'ASC'])
+        if (queries.priceDown) {
+            myOrder.push(['price', 'DESC'])
+        } else if (queries.priceUp) {
+            myOrder.push(['price', 'ASC'])
         }
     }
-    if (queries.needToSell){
+    if (queries.needToSell != undefined) {
         whereItem.needToSell = queries.needToSell
     }
-    if (queries.districtID){
+    if (queries.districtID) {
         whereAddress.districtID = queries.districtID
-    }else if (queries.provinceID){
+    } else if (queries.provinceID) {
         whereDistrict.provinceID = queries.provinceID
+    }
+
+    if (!queries.page) {
+        TE("not has param page")
+    } else {
+        page = parseInt(queries.page)
+    }
+    if (queries.standID) {
+        whereItem.standID = queries.standID
     }
     let err, items
     [err, items] = await to(Item.findAll(
@@ -177,3 +185,17 @@ var getUserItemMarked = async (user)=>{
     return userItemsMarked
 }
 module.exports.getUserItemMarked = getUserItemMarked
+
+const deleteItem = async (itemId)=>{
+    let err, result
+    [err, result] = await to(Item.destroy({
+        where: {
+            itemID: itemId
+        }
+    }))
+    if (err){
+        TE(err)
+    }
+    return result
+}
+module.exports.deleteItem = deleteItem

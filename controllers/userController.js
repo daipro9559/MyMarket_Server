@@ -17,12 +17,13 @@ module.exports.create = async (req, res) => {
 }
 
 module.exports.login = async (req, res) => {
-    let userInfo = {};
-    userInfo.email = req.body.email;
-    userInfo.password = req.body.password;
-    var err, user;
-    [err, user] = await to(userService.authUser(userInfo));
-    if (err) return ReE(res, err, 201);
+    let userInfo = {}
+    userInfo.email = req.body.email
+    userInfo.password = req.body.password
+    userInfo.tokenFireBase = req.body.tokenFireBase
+    var err, user
+    [err, user] = await to(userService.authUser(userInfo))
+    if (err) return ReE(res, err, status.NOT_IMPLEMENTED)
     let dataResponse = {}
     dataResponse.user = user.toWeb()
     dataResponse.token = user.getJWT()
@@ -100,3 +101,13 @@ var updateToSeller = async (req,res)=>{
     return ReS(res,null,status.OK,"update to seller completed")
 }
 module.exports.updateToSeller = updateToSeller
+
+const logout = async (req,res)=>{
+    let err,result 
+    [err,result] = await to(userService.logout(req.user))
+    if (err){
+        return ReE(res,err,status.NOT_IMPLEMENTED)
+    }
+    return ReS(res,null,status.OK,"Logout completed!")
+}
+module.exports.logout = logout

@@ -11,6 +11,14 @@ module.exports = (sequelize, DataTypes) => {
     address: {
       type:DataTypes.STRING,
       allowNull:false
+    },
+    latitude:{
+      type:DataTypes.DOUBLE,
+      allowNull:true
+    },
+    longitude:{
+      type:DataTypes.DOUBLE,
+      allowNull:true
     }
   }, {});
   Address.associate = function(models) {

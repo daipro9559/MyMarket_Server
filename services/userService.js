@@ -26,7 +26,12 @@ const authUser = async function (userInfo) {
     if (!userInfo.email) TE('Please enter email to login');
     if (!userInfo.password) TE('Please enter password to login');
     let user;
-    [err, user] = await to(User.findOne({ where: { email: userInfo.email }}));
+    [err, user] = await to(User.findOne(
+        {
+            where: {
+                email: userInfo.email
+            }
+        }));
     if (!user) {
         TE('Not register');
     }
@@ -34,8 +39,15 @@ const authUser = async function (userInfo) {
     if (err) {
         TE(err.message);
     }
-    user.password=""
-    return user
+    user.tokenFireBase = userInfo.tokenFireBase
+    let userUpdate
+    [err, userUpdate] = await to (user.save())
+    if (err){
+        TE(err)
+    }
+     userUpdate.password = undefined
+     userUpdate.tokenFireBase = undefined
+    return userUpdate
 }
 module.exports.authUser = authUser
 
@@ -137,3 +149,12 @@ var updateToSeller = async (user)=>{
     return true
 }
 module.exports.updateToSeller = updateToSeller
+
+// when user logout delete firebase token , it need for don't receive notification
+const logout = async (user)=>{
+    let err,userUpdated
+    [err,user] = await to(user.update({tokenFireBase:null}))
+    if (err){TE(err)}
+    return  true
+}
+module.exports.logout = logout

@@ -29,7 +29,12 @@ const randomCode = function randomCode(){
     var month = date.getMonth() + 1
     var year = date.getFullYear()
     var day = date.getDate()
-    var pathDir = parent + year + '/' + month + '/' + day + "/"
+    var pathDir
+    if (parent==CONFIG.image_avatar_path){
+    pathDir = parent
+    }else{
+     pathDir = parent + year + '/' + month + '/' + day + "/"
+    }
     var fileExtension = fileName.split(".")[1];
     var newFileName = userID + "-" + Date.now() +"."+fileExtension
     var fullPathImage = pathDir + newFileName

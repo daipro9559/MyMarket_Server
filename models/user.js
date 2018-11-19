@@ -15,9 +15,9 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       type: DataTypes.UUID
     },
-    tokenFirebase:{
+    tokenFireBase:{
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true, // null when user logout
       unique: true,
     },
     name: DataTypes.STRING,
@@ -63,7 +63,7 @@ module.exports = (sequelize, DataTypes) => {
     this.hasMany(models.Item,{foreignKey: 'userID',as: 'Items'})
     this.hasMany(models.Stand,{foreignKey: 'userID',as: 'Stands'})
     this.hasMany(models.UserItemMarked,{foreignKey: 'userID'})
-
+    this.belongsTo(models.Address, {foreignKey: 'addressID',allowNull:true})
     // this.belongsToMany(models.Item,{through:'UserItemMarked'})// 
   };
 

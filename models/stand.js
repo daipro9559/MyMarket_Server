@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     });
     Stand.associate = function(models){
         this.hasMany(models.Item,{foreignKey:'standID'})
-        this.belongsTo(models.User,{foreignKey:'userID'})
+        this.belongsTo(models.User,{foreignKey:'userID',onDelete: 'CASCADE'})
         this.belongsTo(models.Address,{foreignKey:'addressID'})
         this.belongsTo(models.Category,{foreignKey:'categoryID'})
     }

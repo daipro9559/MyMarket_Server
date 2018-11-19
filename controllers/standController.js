@@ -1,11 +1,19 @@
 'use strict'
 const standService = require('../services/standService')
+const addressService = require('../services/addressService')
 const { to, ReE, ReS } = require('../services/utilService')
 const status = require('http-status')
 const util = require('../helper/util')
 const CONFIG = require('../config/conf')
 var createStand = async(req,res)=>{
-    let err, stand={},body = req.body
+    let err, stand={},body = req.body,address={}
+    address.address = body.address
+    address.districtID = body.districtID
+    let addressAdded
+    [err,addressAdded] = await to(addressService.addAddress(address))
+    if (err){
+        ReE(res,err,status.NOT_IMPLEMENTED)
+    }
     if (req.files) {
         var files = req.files.image
         let  imagePathApi 
@@ -21,6 +29,7 @@ var createStand = async(req,res)=>{
     stand.userID = req.user.userID
     stand.name = body.name
     stand.description = body.description
+    stand.addressID = addressAdded.addressID
     let standAdded
     [err,standAdded] = await to(standService.createStand(stand))
     if (err){

@@ -124,10 +124,26 @@ module.exports.getMarkedItems = getMarkedItems
 
 var unMarkItem = async (req,res)=>{
     let err, result
-    [err,result] = await to(itemService.unMarkItem(req.user.userID,req.params.itemId))
+    [err,result] = await to(itemService.unMarkItem(req.user.userID,req.params.itemID))
     if (err){
         return ReE(res,err,status.NOT_FOUND)
     }
     return ReS(res,null,status.OK,"unmarked completed")
 }
 module.exports.unMarkItem = unMarkItem
+
+var deleteItem = async (req,res)=>{
+    let err,result
+    [err,result] =await to(itemService.deleteItem(req.params.itemID))
+    if (err){ return ReE(res,err,status.NOT_FOUND)}
+    return ReS(res,null,status.OK,"Deleted item successfully")
+}
+module.exports.deleteItem = deleteItem
+
+// const getMyItems = async(res,req)=>{
+//     let err,items
+//     [err,items] = await to(itemService.getItems(req.user.userID,req.query)) 
+//     if (err) { return ReE(res, err, status.NOT_IMPLEMENTED) }
+//     return ReS(res,items)
+// }
+// module.exports
