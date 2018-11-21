@@ -1,10 +1,14 @@
 'use strict'
 const itemService = require('../services/itemService')
 const addressService = require('../services/addressService')
+const standService = require('../services/standService')
 const { to, ReE, ReS } = require('../services/utilService')
 const status = require('http-status')
 const util = require('../helper/util')
 const CONFIG = require('../config/conf')
+var FCM = require('fcm-node');
+var serverKey = 'AAAAlPX8D7I:APA91bEoZctTWTy5wXhzjOL9Q8M_uK6iH_guXD_DTWyMdD2KN428e1-rWkG4NIxln5HBULix-oQwS6Tln1hMgzJygAxoSzJHzA51_6o4XheY5u5tT4JxfIuosaD5a6h3VqptHJyAUyJq'
+var fcm = new FCM(serverKey);
 const getAllCategory = async (req,res)=>{
     let err, categories;
     [err,categories] = await to(itemService.getCategories())
@@ -17,19 +21,24 @@ module.exports.getAllCategory = getAllCategory
 
 const addItem = async (req,res)=>{
     let err, item={},address={},body = req.body
-    address.address = body.address
-    address.districtID = body.districtID
-    let addressAdded
-    [err,addressAdded] = await to(addressService.addAddress(address))
-    if (err){
-        ReE(res,err,status.NOT_IMPLEMENTED)
+    if (body.standID) {
+        item.addressID = body.addressID
+        item.standID = body.standID
+    } else {
+        address.address = body.address
+        address.districtID = body.districtID
+        let addressAdded
+        [err, addressAdded] = await to(addressService.addAddress(address))
+        if (err) {
+            ReE(res, err, status.NOT_IMPLEMENTED)
+        }
+        item.addressID = addressAdded.addressID
     }
     item.name = body.name
     item.price = body.price
     item.description = body.description
     item.needToSell = body.needToSell
     item.categoryID = body.categoryID
-    item.addressID = addressAdded.addressID
     item.userID = req.user.userID
     let itemAdded
     if (req.files) {
@@ -62,9 +71,61 @@ const addItem = async (req,res)=>{
     }
     let data = {}
     data.itemID = itemAdded.itemID
+    // if (standID =! null) => notification to user follow
+    //send notification
+    if (body.standID){
+        let users,err
+        [err,users] = await to(standService.getAllUserFollowStand(body.standID))
+        if (err){
+            console.log("khong the lay danh sach user")
+        }
+        let tokens=[],dataNotification={}
+        users.forEach(user=>{
+            if (user.tokenFireBase){
+                tokens.push(user.tokenFireBase)
+            }
+        })
+        dataNotification.itemID=itemAdded.itemID
+        dataNotification.standID = body.standID
+        var promises = [];
+        tokens.forEach(token=>{
+            var promise = sendStandNotification(token,dataNotification)
+            promises.push(promise)
+        })
+        Promise.all(promises)
+        .then(results=>{
+
+        }).catch(err=>{
+            
+        })
+    }
     return ReS(res,data,status.OK,"add item completed")
 }
 module.exports.addItem = addItem
+
+var sendStandNotification = (token,data)=>{
+    var message = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
+        to: token, 
+        collapse_key: 'My Market!',
+        
+        notification: {
+            title: 'Bạn có thông báo mới!', 
+            body: 'Gian hàng bạn đã đăng ký vừa đăng tin mới, click để xem !' 
+        },
+        data: {  //you can send only notification or only data(or include both)
+            standID: data.standID,
+            itemID: data.itemID
+        }
+    };
+    
+    fcm.send(message, function(err, response){
+        if (err) {
+            console.log(err.message);
+        } else {
+            console.log("Successfully sent with response: ", response);
+        }
+    });
+}
 
 const getItems =async (req,res)=>{
     let categoryID = req.query.categoryID
@@ -93,6 +154,16 @@ const getItems =async (req,res)=>{
     return ReS(res,items,status.OK,"get items completed",util.checkLastPage(items.length))
 }
 module.exports.getItems = getItems
+
+const getItemDetail = async(req,res)=>{
+    let err,item
+    [err,item] = await to(itemService.getItemDetail(req.params.itemID))
+    if (err){
+        return ReE(res,err,status.NOT_IMPLEMENTED)
+    }
+    return ReS(res,item,status.OK)
+}
+module.exports.getItemDetail = getItemDetail
 
 // marked item 
 var markItem = async (req,res)=>{

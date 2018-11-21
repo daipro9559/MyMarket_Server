@@ -30,6 +30,7 @@ var createStand = async(req,res)=>{
     stand.name = body.name
     stand.description = body.description
     stand.addressID = addressAdded.addressID
+    stand.categoryID = body.categoryID
     let standAdded
     [err,standAdded] = await to(standService.createStand(stand))
     if (err){
@@ -51,10 +52,57 @@ module.exports.getMyStands = getMyStands
 
 var getStands = async (req,res)=>{
     let err,stands
-    [err,stands] = await to(standService.getStands(req.user.userID))
+    [err,stands] = await to(standService.getStands(req.user.userID,req.query))
     if (err){
         return ReE(res,err,status.NOT_FOUND)
     }
+    let usersStandsFollowed
+    [err,usersStandsFollowed] = await to(standService.getUserStandFollowed(req.user))
+    if (err){
+        return ReE(res,err,status.NOT_IMPLEMENTED)
+    }
+
+    usersStandsFollowed.forEach(userStandFollow => {
+        stands.forEach(stand=>{
+            if (stand.standID == userStandFollow.standID){
+                stand.isFollowed = true
+            }
+        })
+    })
     return ReS(res,stands,status.OK)
 }
 module.exports.getStands = getStands
+
+const followStand = async (req,res)=>{
+    let err,userStand
+    if (!req.body.standID){
+        return ReE(res," not select item",status.NOT_IMPLEMENTED)
+    }
+   [err,userStand] = await to (standService.followStand(req.user.userID,req.body.standID))
+   if (err){
+    return ReE(res,err,status.NOT_IMPLEMENTED)
+   }
+   return ReS(res,userStand,status.OK)
+}
+module.exports.followStand = followStand
+
+var unFollow = async (req,res)=>{
+    let err, result
+    [err,result] = await to(standService.unFollowStand(req.user.userID,req.params.standID))
+    if (err){
+        return ReE(res,err,status.NOT_FOUND)
+    }
+    return ReS(res,null,status.OK,"unmarked completed")
+}
+module.exports.unFollow = unFollow
+
+
+const deleteStand = async(req,res)=>{
+    let err,result
+    [err,result] = await to(standService.deleteStand(req.params.standID))
+    if (err){
+        return ReE(res,err,status.NOT_IMPLEMENTED)
+    }
+    return ReS(res,null,status.OK,"Delete stand completed")
+}
+module.exports.deleteStand = deleteStand

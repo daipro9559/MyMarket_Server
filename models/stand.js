@@ -17,13 +17,21 @@ module.exports = (sequelize, DataTypes) => {
         image:{// imagePath 
             allowNull:true,
             type:DataTypes.STRING
-        }
+        },
+        isFollowed: { // no have column this table, it will use check for item is marked
+            type: DataTypes.VIRTUAL,
+            defaultValue:false
+          },
+        createdAt: DataTypes.DATE,
+        updatedAt: DataTypes.DATE
     });
     Stand.associate = function(models){
         this.hasMany(models.Item,{foreignKey:'standID'})
         this.belongsTo(models.User,{foreignKey:'userID',onDelete: 'CASCADE'})
         this.belongsTo(models.Address,{foreignKey:'addressID'})
         this.belongsTo(models.Category,{foreignKey:'categoryID'})
+        this.hasMany(models.UserStandFollow,{foreignKey: 'standID'})
+
     }
     return Stand
 }

@@ -25,14 +25,14 @@ module.exports.createUser = createUser
 const authUser = async function (userInfo) {
     if (!userInfo.email) TE('Please enter email to login');
     if (!userInfo.password) TE('Please enter password to login');
-    let user;
+    let user
     [err, user] = await to(User.findOne(
         {
             where: {
                 email: userInfo.email
             }
-        }));
-    if (!user) {
+        }))
+    if (err) {
         TE('Not register');
     }
     [err, user] = await to(user.comparePassword(userInfo.password))
@@ -134,7 +134,11 @@ module.exports.changePassword = changePassword
 // userID 
 const getProfile = async (userId)=>{
     let err,user
-    [err,user] = await to(User.findOne({where:{userID:userId}}))
+    [err,user] = await to(User.findOne(
+    {
+        where:{userID:userId},
+        attributes:['name','phone','avatar']
+    }))
     if (err){
         TE(err)
     }

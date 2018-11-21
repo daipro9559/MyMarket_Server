@@ -53,3 +53,32 @@ const randomCode = function randomCode(){
     return false
   }
   module.exports.checkLastPage = checkLastPage
+
+const asyncDeleteFiles = (imagePaths) => {
+  return new Promise((resolve, reject) => {
+    if (Array.isArray(imagePaths)) {
+      imagePaths.forEach(element => {
+        fs.unlink("public/" + element, (err) => {
+          if (err) {
+            reject(err)
+          }else{
+            resolve(true)
+          }
+        })
+      })
+    } else if (imagePaths != null && imagePaths.length > 0) {
+        fs.unlink("public/" + element, (err) => {
+          if (err) {
+            reject(err)
+          }else{
+            resolve(true)
+          }
+        })
+      }else{
+        // no have file
+        resolve(true)
+      }
+  })
+}
+
+module.exports.asyncDeleteFiles = asyncDeleteFiles

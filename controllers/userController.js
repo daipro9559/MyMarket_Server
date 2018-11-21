@@ -81,8 +81,13 @@ const getPhoneSeller = async (req,res)=>{
 module.exports.getPhoneSeller = getPhoneSeller
 
 const getProfile = async (req,res)=>{
-    let err, user
-    [err,user] = await to (userService.getProfile(req.user.userID))
+    let err, user,userID
+    if (req.param.userID){
+        userID = req.param.userID
+    }else{
+        userID = req.user.userID
+    }
+    [err,user] = await to (userService.getProfile(userID))
     if (err){
         return ReE(res,err.message,status.NOT_IMPLEMENTED)
     }

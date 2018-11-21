@@ -19,7 +19,9 @@ module.exports = (sequelize, DataTypes) => {
     longitude:{
       type:DataTypes.DOUBLE,
       allowNull:true
-    }
+    },
+    createdAt: DataTypes.DATE,
+    updatedAt: DataTypes.DATE
   }, {});
   Address.associate = function(models) {
     // associations can be defined here

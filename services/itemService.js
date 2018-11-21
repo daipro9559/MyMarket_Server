@@ -4,6 +4,8 @@ const CONFIG = require('../config/conf')
 const {Category,Item,Address,District,UserItemMarked,sequelize,User} = require('../models')
 const Sequelize = require('sequelize')
 const Op = Sequelize.Op
+const fs = require('fs');
+const util = require('../helper/util')
 
 const getCategories = async()=>{
     let err,categories
@@ -129,6 +131,25 @@ const getItems = async (userId, queries) => {
 }
 module.exports.getItems = getItems
 
+const getItemDetail = async(itemId)=>{
+    let err,item 
+    [err,item] = await to(Item.findOne({
+        where:{
+            itemID:itemId
+        },
+        include: [
+            {
+                model: Address
+            }
+        ]
+    }))
+    if (err){
+        TE(err)
+    }
+    return item
+}
+module.exports.getItemDetail = getItemDetail
+
 // operate mark item 
 var markItem = async (userId,itemId)=>{
     let err,userItem
@@ -187,8 +208,8 @@ var getUserItemMarked = async (user)=>{
 module.exports.getUserItemMarked = getUserItemMarked
 
 const deleteItem = async (itemId)=>{
-    let err, result
-    [err, result] = await to(Item.destroy({
+    let err, item
+    [err, item] = await to(Item.findOne({
         where: {
             itemID: itemId
         }
@@ -196,6 +217,20 @@ const deleteItem = async (itemId)=>{
     if (err){
         TE(err)
     }
+    //delete file
+    let result
+    // check if (array length or  string length)
+    if ( item.images.length > 0){
+         util.asyncDeleteFiles(item.images).then((result)=>{
+             console.log("delete file completed")
+         })
+    }
+    [err, result] = await to(item.destroy())
+    if (err){
+        TE(err)
+    }
     return result
 }
+
 module.exports.deleteItem = deleteItem
+

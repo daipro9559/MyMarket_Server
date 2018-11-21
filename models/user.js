@@ -55,14 +55,17 @@ module.exports = (sequelize, DataTypes) => {
     avatar:{
       type: DataTypes.STRING,
       allowNull:true
-    }
+    },
+    createdAt: DataTypes.DATE,
+    updatedAt: DataTypes.DATE
   });
   // ưu tiên bảng nối item dánh dấu. boi viet cau truy van se dai hon
   User.associate = function (models) {
         // associations can be defined here
-    this.hasMany(models.Item,{foreignKey: 'userID',as: 'Items'})
-    this.hasMany(models.Stand,{foreignKey: 'userID',as: 'Stands'})
+    this.hasMany(models.Item,{foreignKey: 'userID',as: 'Items',onDelete: 'cascade', hooks: true})
+    this.hasMany(models.Stand,{foreignKey: 'userID',as: 'Stands',onDelete: 'cascade', hooks: true})
     this.hasMany(models.UserItemMarked,{foreignKey: 'userID'})
+    this.hasMany(models.UserStandFollow,{foreignKey: 'userID'})
     this.belongsTo(models.Address, {foreignKey: 'addressID',allowNull:true})
     // this.belongsToMany(models.Item,{through:'UserItemMarked'})// 
   };

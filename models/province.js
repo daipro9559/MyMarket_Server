@@ -11,7 +11,9 @@ module.exports = (sequelize, DataTypes) => {
     provinceName: {
       type:DataTypes.STRING,
       allowNull:false
-    }
+    },
+    createdAt: DataTypes.DATE,
+    updatedAt: DataTypes.DATE
   }, {});
   Province.associate = function(models) {
     this.hasMany(models.District,{foreignKey: 'provinceID'})

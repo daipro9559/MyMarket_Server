@@ -14,7 +14,9 @@ module.exports = (sequelize, DataTypes) => {
     imagePath:{
       type:DataTypes.STRING,
       allowNull:false
-    }
+    },
+    createdAt: DataTypes.DATE,
+    updatedAt: DataTypes.DATE
   }, 
   {});
   Category.associate = function(models) {

@@ -1,7 +1,7 @@
 'use strict'
 module.exports = (sequelize, DataTypes) => {
-    const UserItemMarked = sequelize.define('UserItemMarked',{
-        itemID:{
+    const UserStandFollow = sequelize.define('UserStandFollow',{
+        standID:{
             type: DataTypes.UUID,
             allowNull: false,
             defaultValue: DataTypes.UUIDV4,
@@ -16,9 +16,9 @@ module.exports = (sequelize, DataTypes) => {
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE
     },{});
-    UserItemMarked.associate = function(models){
+    UserStandFollow.associate = function(models){
         this.belongsTo(models.User,{foreignKey:'userID'})
-        this.belongsTo(models.Item,{foreignKey:'itemID'})
+        this.belongsTo(models.Stand,{foreignKey:'standID'})
     }
-    return UserItemMarked
+    return UserStandFollow
 }

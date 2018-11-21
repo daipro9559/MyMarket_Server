@@ -34,12 +34,14 @@ module.exports = (sequelize, DataTypes) => {
     isMarked: { // no have column this table, it will use check for item is marked
       type: DataTypes.VIRTUAL,
       defaultValue:false
-    }
+    },
+    createdAt: DataTypes.DATE,
+    updatedAt: DataTypes.DATE
   }, {});
   Item.associate = function(models) {
     // associations can be defined here
     this.belongsTo(models.Category,{foreignKey:'categoryID'})
-    this.belongsTo(models.User, {foreignKey:'userID',onDelete: 'CASCADE'})
+    this.belongsTo(models.User, {foreignKey:'userID'})
     this.belongsTo(models.Address, {foreignKey: 'addressID'})
     this.belongsTo(models.Stand,{foreignKey:'standID'})
     this.hasMany(models.UserItemMarked,{foreignKey: 'itemID'})

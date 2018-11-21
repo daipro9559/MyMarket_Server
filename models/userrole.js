@@ -8,7 +8,9 @@ module.exports = (sequelize, DataTypes) => {
       unique: true,
       type: DataTypes.INTEGER
     },
-    userRoleName: DataTypes.STRING
+    userRoleName: DataTypes.STRING,
+    createdAt: DataTypes.DATE,
+    updatedAt: DataTypes.DATE
   }, {});
   UserRole.associate = function(models) {
     this.hasOne(models.User,{foreignKey: 'userRoleID'})
