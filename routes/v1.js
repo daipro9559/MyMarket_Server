@@ -63,4 +63,7 @@ router.get('/', function(req, res, next) {
   router.delete('/stands/:standID',passport.authenticate('jwt', {session:false}),standController.deleteStand)
   router.post('/stands/follow',passport.authenticate('jwt',{session:false}),standController.followStand)
   router.delete('/stands/follow/:standID',passport.authenticate('jwt',{session:false}),standController.unFollow)
+
+// case notifications
+router.get('/notifications',passport.authenticate('jwt',{session:false}))
   module.exports = router
