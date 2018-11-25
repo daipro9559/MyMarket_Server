@@ -1,7 +1,7 @@
 'use strict'
 module.exports = (sequelize, DataTypes) => {
-    const UserStandFollow = sequelize.define('UserStandFollow',{
-        standID:{
+    const UserNotification = sequelize.define('UserNotification',{
+        notificationID:{
             type: DataTypes.UUID,
             allowNull: false,
             defaultValue: DataTypes.UUIDV4,
@@ -16,9 +16,9 @@ module.exports = (sequelize, DataTypes) => {
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE
     },{});
-    UserStandFollow.associate = function(models){
-        this.belongsTo(models.User,{foreignKey:'userID',onDelete: 'CASCADE', hooks: true})
-        this.belongsTo(models.Stand,{foreignKey:'standID',onDelete: 'CASCADE', hooks: true})
+    UserNotification.associate = function(models){
+        this.belongsTo(models.User,{foreignKey:'userID',onDelete: 'CASCADE'})
+        this.belongsTo(models.Notification,{foreignKey:'notificationID',onDelete: 'CASCADE'})
     }
-    return UserStandFollow
+    return UserNotification
 }

@@ -7,8 +7,7 @@ const status = require('http-status')
 const util = require('../helper/util')
 const CONFIG = require('../config/conf')
 var FCM = require('fcm-node');
-var serverKey = 'AAAAlPX8D7I:APA91bEoZctTWTy5wXhzjOL9Q8M_uK6iH_guXD_DTWyMdD2KN428e1-rWkG4NIxln5HBULix-oQwS6Tln1hMgzJygAxoSzJHzA51_6o4XheY5u5tT4JxfIuosaD5a6h3VqptHJyAUyJq'
-var fcm = new FCM(serverKey);
+var fcm = new FCM(CONFIG.serverKey);
 const getAllCategory = async (req,res)=>{
     let err, categories;
     [err,categories] = await to(itemService.getCategories())
@@ -41,91 +40,40 @@ const addItem = async (req,res)=>{
     item.categoryID = body.categoryID
     item.userID = req.user.userID
     let itemAdded
-    if (req.files) {
-        var files = req.files.images
-        var imagePath = [], imagePathApi = []
-        if (Array.isArray(files)) {
-            for (var i = 0; i < files.length; i++) {
-                var path = util.getImagePath(item.userID, files[i].name,CONFIG.image_item_path)
-                imagePath.push(path)
-                imagePathApi.push(path.substr(7, path.length))
-                files[i].mv(path, (err) => {
-                    console.log(err)
-                })
-            }
-        } else {
-            var path = util.getImagePath(item.userID, files.name,CONFIG.image_item_path)
-            imagePath.push(path)
-            imagePathApi.push(path.substr(7, path.length))
-            files.mv(path, (err) => {
-                console.log(err)
-            })
-        }
-        item.images = JSON.stringify(imagePathApi);//convert array image path to json
-    }else{
-        item.images = JSON.stringify([])
-    }
-    [err,itemAdded] = await to(itemService.addItem(item))
+    // if (req.files) {
+    //     var files = req.files.images
+    //     var imagePath = [], imagePathApi = []
+    //     if (Array.isArray(files)) {
+    //         for (var i = 0; i < files.length; i++) {
+    //             var path = util.getImagePath(item.userID, files[i].name,CONFIG.image_item_path)
+    //             imagePath.push(path)
+    //             imagePathApi.push(path.substr(7, path.length))
+    //             files[i].mv(path, (err) => {
+    //                 console.log(err)
+    //             })
+    //         }
+    //     } else {
+    //         var path = util.getImagePath(item.userID, files.name,CONFIG.image_item_path)
+    //         imagePath.push(path)
+    //         imagePathApi.push(path.substr(7, path.length))
+    //         files.mv(path, (err) => {
+    //             console.log(err)
+    //         })
+    //     }
+    //     item.images = JSON.stringify(imagePathApi);//convert array image path to json
+    // }else{
+    //     item.images = JSON.stringify([])
+    // }
+    item.images = util.saveImages(req.files,item.userID)
+    [err,itemAdded] = await to(req.user.createItem(item))
     if (err){
        return ReE(res,err,status.NOT_IMPLEMENTED)
     }
     let data = {}
     data.itemID = itemAdded.itemID
-    // if (standID =! null) => notification to user follow
-    //send notification
-    if (body.standID){
-        let users,err
-        [err,users] = await to(standService.getAllUserFollowStand(body.standID))
-        if (err){
-            console.log("khong the lay danh sach user")
-        }
-        let tokens=[],dataNotification={}
-        users.forEach(user=>{
-            if (user.tokenFireBase){
-                tokens.push(user.tokenFireBase)
-            }
-        })
-        dataNotification.itemID=itemAdded.itemID
-        dataNotification.standID = body.standID
-        var promises = [];
-        tokens.forEach(token=>{
-            var promise = sendStandNotification(token,dataNotification)
-            promises.push(promise)
-        })
-        Promise.all(promises)
-        .then(results=>{
-
-        }).catch(err=>{
-            
-        })
-    }
     return ReS(res,data,status.OK,"add item completed")
 }
 module.exports.addItem = addItem
-
-var sendStandNotification = (token,data)=>{
-    var message = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
-        to: token, 
-        collapse_key: 'My Market!',
-        
-        notification: {
-            title: 'Bạn có thông báo mới!', 
-            body: 'Gian hàng bạn đã đăng ký vừa đăng tin mới, click để xem !' 
-        },
-        data: {  //you can send only notification or only data(or include both)
-            standID: data.standID,
-            itemID: data.itemID
-        }
-    };
-    
-    fcm.send(message, function(err, response){
-        if (err) {
-            console.log(err.message);
-        } else {
-            console.log("Successfully sent with response: ", response);
-        }
-    });
-}
 
 const getItems =async (req,res)=>{
     let categoryID = req.query.categoryID

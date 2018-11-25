@@ -41,9 +41,9 @@ module.exports = (sequelize, DataTypes) => {
   Item.associate = function(models) {
     // associations can be defined here
     this.belongsTo(models.Category,{foreignKey:'categoryID'})
-    this.belongsTo(models.User, {foreignKey:'userID'})
+    this.belongsTo(models.User, {foreignKey:'userID',onDelete: 'CASCADE', hooks: true})
     this.belongsTo(models.Address, {foreignKey: 'addressID'})
-    this.belongsTo(models.Stand,{foreignKey:'standID'})
+    this.belongsTo(models.Stand,{foreignKey:'standID',onDelete: 'CASCADE', hooks: true})
     this.hasMany(models.UserItemMarked,{foreignKey: 'itemID'})
 
     // this.belongsToMany(models.User,{through:'UserItemMarked'})

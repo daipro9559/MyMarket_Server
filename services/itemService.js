@@ -45,7 +45,6 @@ const getItems = async (userId, queries) => {
             [Op.like]: queryName
         }
     }
-
     if (queries.isNewest != undefined && queries.isNewest == true) {
         myOrder.push(['updatedAt', 'DESC'])
     }
@@ -72,6 +71,7 @@ const getItems = async (userId, queries) => {
             myOrder.push(['price', 'ASC'])
         }
     }
+   
     if (queries.needToSell != undefined) {
         whereItem.needToSell = queries.needToSell
     }

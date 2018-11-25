@@ -82,3 +82,34 @@ const asyncDeleteFiles = (imagePaths) => {
 }
 
 module.exports.asyncDeleteFiles = asyncDeleteFiles
+
+// save file to server and return json imagePaths to save database
+
+const saveImages = (imageFiles,userID) => {
+  // check files
+  if (imageFiles) {
+    var files = imageFiles.images
+    var imagePath = [], imagePathApi = []
+    if (Array.isArray(files)) {
+      for (var i = 0; i < files.length; i++) {
+        var path = getImagePath(userID, files[i].name, CONFIG.image_item_path)
+        imagePath.push(path)
+        imagePathApi.push(path.substr(7, path.length))
+        files[i].mv(path, (err) => {
+          console.log(err)
+        })
+      }
+    } else {
+      var path = getImagePath(userID, files.name, CONFIG.image_item_path)
+      imagePath.push(path)
+      imagePathApi.push(path.substr(7, path.length))
+      files.mv(path, (err) => {
+        console.log(err)
+      })
+    }
+    return JSON.stringify(imagePathApi);//convert array image path to json
+  } else {
+    return JSON.stringify([])
+  }
+}
+module.exports.saveImages = saveImages

@@ -35,3 +35,18 @@ var addAddress = async (address)=>{
 
 }
 module.exports.addAddress = addAddress
+
+var getProvince = async (provinceId)=>{
+    let err, province
+    [err,province] = await to (Province.findById(provinceId)) 
+    if (err) { TE(err)}
+    return province
+}
+module.exports.getProvince = getProvince
+var getDistrict = async (districtId)=>{
+    let err, district
+    [err,district] = await to (District.findById(districtId))
+    if (err) { TE(err)}
+    return district
+}
+module.exports.getDistrict = getDistrict

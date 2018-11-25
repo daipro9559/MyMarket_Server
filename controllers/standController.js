@@ -1,10 +1,14 @@
 'use strict'
 const standService = require('../services/standService')
 const addressService = require('../services/addressService')
+const itemService = require('../services/itemService')
+const notificationService  = require('../services/notificationService')
 const { to, ReE, ReS } = require('../services/utilService')
 const status = require('http-status')
 const util = require('../helper/util')
 const CONFIG = require('../config/conf')
+const FCM = require('fcm-node')
+const fcm = new FCM(CONFIG.serverKey)
 var createStand = async(req,res)=>{
     let err, stand={},body = req.body,address={}
     address.address = body.address
@@ -32,13 +36,133 @@ var createStand = async(req,res)=>{
     stand.addressID = addressAdded.addressID
     stand.categoryID = body.categoryID
     let standAdded
-    [err,standAdded] = await to(standService.createStand(stand))
+    [err,standAdded] = await to(req.user.createStand(stand))
     if (err){
         return ReE(res,err,status.NOT_IMPLEMENTED)
     }
     return ReS(res,standAdded,status.OK)
 }
 module.exports.createStand = createStand
+
+const addItemToStand = async (req,res)=>{
+    let standObject
+    let err, item={},body = req.body
+    // get stand detail
+    if (body.standID) {
+        [err,standObject] = await to(standService.getStandDetail(body.standID))
+        if (err){
+            return ReE(res,err,status.NOT_IMPLEMENTED)
+        }
+        item.addressID = body.addressID
+        item.standID = body.standID
+    }else{
+       return ReE(res,"no standId param",status.NOT_IMPLEMENTED)
+    }
+    item.name = body.name;
+    item.price = body.price;
+    item.description = body.description;
+    item.needToSell = body.needToSell;
+    item.categoryID = body.categoryID;
+    item.userID = req.user.userID;
+    item.images = util.saveImages(req.files,item.userID);
+    let itemAdded
+    [err,itemAdded] = await to(req.user.createItem(item))
+    if (err){
+       return ReE(res,err,status.NOT_IMPLEMENTED)
+    }
+    let data = {}
+    data.itemID = itemAdded.itemID
+    // if (standID =! null) => notification to user follow
+    //send notification
+    
+    let users
+    [err, users] = await to(standService.getAllUserFollowStand(body.standID))
+    if (err) {
+        console.log("khong the lay danh sach user")
+    }
+    
+    // save notification if at least one user followed this stand
+    if (users.length > 0) {
+        let dataNotification = {}
+        dataNotification.itemID = itemAdded.itemID
+        dataNotification.body = itemAdded.name + '\n Click để xem !'
+        dataNotification.standID = standObject.standID
+        dataNotification.icon = standObject.image
+        dataNotification.title = standObject.name + " vừa đăng một tin mới vào gian hàng của mình!"
+        // save notification to database
+        let notification = {}, objectData = {}
+        notification.type = 2
+        notification.title = standObject.name + " đã đăng một tin vào gian hàng của mình"
+        notification.icon = dataNotification.icon
+        objectData.itemID = dataNotification.itemID
+        notification.data = JSON.stringify(objectData)
+        notification.body = itemAdded.name
+        notificationService.saveNotification(notification).then(notificationAdded => {
+            users.forEach(user => {
+                if (user.tokenFireBase) { // when user logout, no send notification
+                    sendStandNotification(user.tokenFireBase, dataNotification)
+                        .then(response => {
+                            console.log("")
+                        })
+                        .catch(err => {
+                            console.log(err)
+                        })
+                }
+                let userNoti ={}
+                user.addNotification(notificationAdded)
+                // userNoti.userID = user.userID
+                // userNoti.notificationID = notificationAdded.notificationID
+                // notificationService.saveUserNotification(userNoti).then(result=>{
+                //     console.log("save userNotificaion success")
+                // }).catch(err=>{
+                //     console.log("save userNotificaion error: "+err.message)
+                // })
+                // notificationAdded.setUsers([req.user])
+                //     .then(result => {
+                //         console.log(result)
+
+                //     }).catch(err => {
+                //         console.log(err)
+                //     })
+            })
+
+    
+        }).catch(err => {
+
+        })
+    }
+    
+    return ReS(res,data,status.OK,"add item completed")
+}
+module.exports.addItemToStand = addItemToStand
+
+
+var sendStandNotification = (token,data)=>{
+    return new Promise((resolve, reject)=>{
+        let message = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
+            to: token, 
+            collapse_key: CONFIG.collapse_key,
+            
+            notification: {
+                icon:data.icon,
+                title: data.title,
+                body: data.body
+            },  
+            data: {  //you can send only notification or only data(or include both)
+                standID: data.standID,
+                itemID: data.itemID
+            }
+        }   
+        fcm.send(message, function(err, response){
+            if (err) {
+                reject(err.message)
+            } else {
+               resolve (response)
+            }
+        });
+    })
+    
+}
 
 var getMyStands = async (req,res)=>{
     let err,stands
@@ -69,7 +193,7 @@ var getStands = async (req,res)=>{
             }
         })
     })
-    return ReS(res,stands,status.OK)
+    return ReS(res,stands,status.OK,util.checkLastPage(stands.length))
 }
 module.exports.getStands = getStands
 

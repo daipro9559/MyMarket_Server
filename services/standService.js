@@ -30,7 +30,10 @@ var getMyStands = async (userId)=>{
 module.exports.getMyStands = getMyStands
 
 var getStands = async (userId,queries)=>{
-    let err,stands
+    let err,stands,page
+    if (queries.page== undefined){
+        page = 0
+    }
     [err, stands] = await to(Stand.findAll(
         {
             where: {
@@ -42,7 +45,10 @@ var getStands = async (userId,queries)=>{
                 {
                     model: Address
                 }
-            ]
+            ],
+            order: [ ['updatedAt', 'DESC']],
+            offset: page * CONFIG.page_size_stand,
+            limit: CONFIG.page_size_stand
         }))
     if(err){
         TE(err)
@@ -133,3 +139,15 @@ const getAllUserFollowStand = async (standId)=>{
     return users
 }
 module.exports.getAllUserFollowStand = getAllUserFollowStand
+
+// get stand detail 
+
+const getStandDetail = async (standId)=>{
+    let err, stand
+    [err,stand] = await to(Stand.findById(standId))
+    if (err) {
+        TE(err)
+    }
+    return stand
+}
+module.exports.getStandDetail = getStandDetail
