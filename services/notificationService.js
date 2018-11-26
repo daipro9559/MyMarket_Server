@@ -1,7 +1,7 @@
 'use strict'
 const {to,TE} = require('../services/utilService')
 const CONFIG = require('../config/conf')
-const {Category,Item,District,sequelize,User,Notification,UserNotification} = require('../models')
+const {Category,Item,District,sequelize,User,Notification,UserNotification,ConditionNotify} = require('../models')
 const Sequelize = require('sequelize')
 const Op = Sequelize.Op
 const fs = require('fs');
@@ -85,3 +85,8 @@ const deleteNotification = async (userId,notificationId)=>{
   return result
 }
 module.exports.deleteNotification = deleteNotification
+
+
+var getConditionNotify = async (userId)=>{
+  
+}
