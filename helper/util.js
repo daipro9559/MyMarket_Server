@@ -85,27 +85,24 @@ module.exports.asyncDeleteFiles = asyncDeleteFiles
 
 // save file to server and return json imagePaths to save database
 
-const saveImages = (imageFiles,userID) => {
+const saveImages = async (imageFiles,userID,parent) => {
   // check files
   if (imageFiles) {
+    let err,result
     var files = imageFiles.images
     var imagePath = [], imagePathApi = []
     if (Array.isArray(files)) {
       for (var i = 0; i < files.length; i++) {
-        var path = getImagePath(userID, files[i].name, CONFIG.image_item_path)
+        var path = getImagePath(userID, files[i].name, parent)
         imagePath.push(path)
         imagePathApi.push(path.substr(7, path.length))
-        files[i].mv(path, (err) => {
-          console.log(err)
-        })
+       [err,result] = await to( files[i].mv(path))
       }
     } else {
       var path = getImagePath(userID, files.name, CONFIG.image_item_path)
       imagePath.push(path)
       imagePathApi.push(path.substr(7, path.length))
-      files.mv(path, (err) => {
-        console.log(err)
-      })
+      [err,result] = await to( files[i].mv(path))
     }
     return JSON.stringify(imagePathApi);//convert array image path to json
   } else {

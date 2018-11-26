@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
         this.belongsTo(models.Address,{foreignKey:'addressID',onDelete: 'CASCADE', hooks: true})
         this.belongsTo(models.Category,{foreignKey:'categoryID'})
         this.hasMany(models.UserStandFollow,{foreignKey: 'standID'})
-
+        this.hasMany(models.Comment,{foreignKey: 'standID'})
     }
     return Stand
 }

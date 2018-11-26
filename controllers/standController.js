@@ -18,18 +18,19 @@ var createStand = async(req,res)=>{
     if (err){
         ReE(res,err,status.NOT_IMPLEMENTED)
     }
-    if (req.files) {
-        var files = req.files.image
-        let  imagePathApi 
-        let path = util.getImagePath(req.user.userID, files.name, CONFIG.image_stand_path)
-        imagePathApi = path.substr(7, path.length)
-        files.mv(path, (err) => {
-            console.log(err)
-        })
-        stand.image = imagePathApi
-    }else{
-        stand.image = null
-    }
+    // if (req.files) {
+    //     var files = req.files.image
+    //     let  imagePathApi 
+    //     let path = util.getImagePath(req.user.userID, files.name, CONFIG.image_stand_path)
+    //     imagePathApi = path.substr(7, path.length)
+    //     files.mv(path, (err) => {
+    //         console.log(err)
+    //     })
+    //     stand.image = imagePathApi
+    // }else{
+    //     stand.image = null
+    // }
+    [err,stand.image] = await to(util.saveImages(req.files,item.userID,CONFIG.image_stand_path))
     stand.userID = req.user.userID
     stand.name = body.name
     stand.description = body.description
@@ -64,7 +65,7 @@ const addItemToStand = async (req,res)=>{
     item.needToSell = body.needToSell;
     item.categoryID = body.categoryID;
     item.userID = req.user.userID;
-    item.images = util.saveImages(req.files,item.userID);
+    [err,item.images] = await to(util.saveImages(req.files,item.userID,CONFIG.image_item_path))
     let itemAdded
     [err,itemAdded] = await to(req.user.createItem(item))
     if (err){

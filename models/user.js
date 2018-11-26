@@ -69,6 +69,7 @@ module.exports = (sequelize, DataTypes) => {
     this.belongsTo(models.Address, {foreignKey: 'addressID',allowNull:true})
     this.belongsToMany(models.Notification, {through: 'UserNotifications',foreignKey: 'userID'})
     this.hasOne(models.ConditionNotify,{foreignKey:'userID'})
+    this.hasMany(models.Comment,{foreignKey: 'userID'})
   };
 
   User.beforeSave(async function (user, options){
