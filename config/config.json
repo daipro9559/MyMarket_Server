@@ -8,7 +8,7 @@
 },
   "development": {
     "username": "root",
-    "password": "dainguyen",
+    "password": "dainguyen95",
     "database": "market_development",
     "host": "127.0.0.1",
     "dialect": "mysql"

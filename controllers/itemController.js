@@ -27,7 +27,7 @@ const addItem = async (req,res)=>{
         address.address = body.address
         address.districtID = body.districtID
         let addressAdded
-        [err, addressAdded] = await to(addressService.addAddress(address))
+        [err, addressAdded] = await to(addressService.addAddress(address));
         if (err) {
             ReE(res, err, status.NOT_IMPLEMENTED)
         }
@@ -64,7 +64,10 @@ const addItem = async (req,res)=>{
     // }else{
     //     item.images = JSON.stringify([])
     // }
-    item.images = util.saveImages(req.files,item.userID)
+    [err,item.images] = await to(util.saveImages(req.files,item.userID,CONFIG.image_item_path));
+    if (err){
+        return ReE(res,err,status.NOT_IMPLEMENTED)
+    }
     [err,itemAdded] = await to(req.user.createItem(item))
     if (err){
        return ReE(res,err,status.NOT_IMPLEMENTED)
@@ -159,10 +162,8 @@ var deleteItem = async (req,res)=>{
 }
 module.exports.deleteItem = deleteItem
 
-// const getMyItems = async(res,req)=>{
-//     let err,items
-//     [err,items] = await to(itemService.getItems(req.user.userID,req.query)) 
-//     if (err) { return ReE(res, err, status.NOT_IMPLEMENTED) }
-//     return ReS(res,items)
-// }
-// module.exports
+
+var requestBuy = async(req,res)=>{
+
+}
+module.exports.requestBuy = requestBuy

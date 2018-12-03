@@ -34,7 +34,7 @@ router.get('/', function(req, res, next) {
   router.post('/user/login',userController.login)
   router.post('/user/forgot', userController.forgot)
   router.post('/user/logout',passport.authenticate('jwt', {session:false}),userController.logout)
-  router.post('/user/:userID',passport.authenticate('jwt', {session:false}),userController.logout)
+  // router.post('/user/:userID',passport.authenticate('jwt', {session:false}),userController.logout)
   router.post('/user/changePassByCode',userController.changePassByCode)
   router.post('/user/changePass',passport.authenticate('jwt', {session:false}),userController.changePassword)
   router.get('/user/phone',passport.authenticate('jwt', {session:false}),userController.getPhoneSeller)
@@ -68,6 +68,8 @@ router.get('/', function(req, res, next) {
 
 // case notifications
 router.get('/notifications', passport.authenticate('jwt', { session: false }), notificationController.getNotifications)
+router.get('/conditionNotify', passport.authenticate('jwt', { session: false }), notificationController.getConditionNotify)
+router.post('/conditionNotify/:conditionID', passport.authenticate('jwt', { session: false }),notificationController.saveSettingCondition)
 router.delete('/notifications/:notificationID', passport.authenticate('jwt', { session: false }),notificationController.deleteNotification)
 
 module.exports = router

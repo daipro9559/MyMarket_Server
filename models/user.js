@@ -84,28 +84,20 @@ module.exports = (sequelize, DataTypes) => {
     }
   });
 
-  User.prototype.comparePassword = async function(pw) {
+  User.prototype.comparePassword =async function(pw) {
     let err, pass
     if(!this.password) {
       TE('password not set')
     }
-    [err, pass] = await to(bcrypt_promise.compare(pw, this.password))
+    [err, pass] = await to(bcrypt_promise.compare(pw, this.password));
     if (err) {TE(err)}
-    if (!pass) {TE('invalid password')}
+    if (!pass) {TE('Mật khẩu không đúng, vui lòng nhập lại')}
     return this
   }
 
   User.prototype.getJWT = function(){
     let exp_time = parseInt(CONFIG.jwt_expiration);
-// <<<<<<< HEAD
-//     let dataToken = {},token;
-//     dataToken.user_id = this.id
-//     dataToken.time = Date.now()
-//     token = jwt.sign(dataToken,CONFIG.jwt_encryption)
-//     return "Bearer " + token;
-// =======
     return "Bearer " + jwt.sign({ user_id: this.userID }, CONFIG.jwt_encryption, { expiresIn: exp_time });
-// >>>>>>> feature/category
   };
   User.prototype.toWeb = function(){
     let json = this.toJSON();

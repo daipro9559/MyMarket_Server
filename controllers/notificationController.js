@@ -28,3 +28,28 @@ const deleteNotification = async (req,res)=>{
     return ReS(res,result,status.OK)
 }
 module.exports.deleteNotification = deleteNotification
+
+var getConditionNotify = async (req,res)=>{
+    let err, result
+    [err,result] = await to(notificationService.getConditionNotify(req.user.userID))
+    if (err){
+        return ReE(res,err,status.NOT_IMPLEMENTED)
+    }
+    return ReS(res,result,status.OK)
+}
+module.exports.getConditionNotify = getConditionNotify
+
+var saveSettingCondition = async (req,res)=>{
+    let err, result,objectCondition={}
+    objectCondition.conditionID = req.params.conditionID;
+    objectCondition.provinceID = req.body.provinceID;
+    objectCondition.categoryID = req.body.categoryID;
+    objectCondition.districtID = req.body.districtID;
+    objectCondition.isEnable = req.body.isEnable;
+    [err, result] = await to(notificationService.saveSettingCondition(objectCondition))
+    if (err) {
+        return ReE(res, err, status.NOT_FOUND)
+    }
+    return ReS(res, null, status.OK)
+}
+module.exports.saveSettingCondition = saveSettingCondition

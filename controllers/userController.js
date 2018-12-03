@@ -17,13 +17,15 @@ module.exports.create = async (req, res) => {
 }
 
 module.exports.login = async (req, res) => {
-    let userInfo = {}
-    userInfo.email = req.body.email
-    userInfo.password = req.body.password
-    userInfo.tokenFireBase = req.body.tokenFireBase
-    var err, user
-    [err, user] = await to(userService.authUser(userInfo))
-    if (err) return ReE(res, err, status.NOT_IMPLEMENTED)
+    let err, user;
+    let userInfo = {};
+    userInfo.email = req.body.email;
+    userInfo.password = req.body.password;
+    userInfo.tokenFireBase = req.body.tokenFireBase;
+    [err,user] = await to(userService.authUser(userInfo));
+    if (err) {
+        return ReE(res, err, status.NOT_IMPLEMENTED)
+    }
     let dataResponse = {}
     dataResponse.user = user.toWeb()
     dataResponse.token = user.getJWT()
@@ -60,11 +62,10 @@ module.exports.changePassword = async (req, res) => {
     if (err){
         return ReE(res,err,status.NOT_ACCEPTABLE)
     }
-    let code = 200
     if (!result){
-        return ReS(res,{message:"can't change password"},code)
+        return ReE(res,{message:"can't change password"},status.NOT_MODIFIED)
     }
-    return ReS(res,{message:"change password completed"},code)
+    return ReS(res,{message:"change password completed"},status.OK)
 }
 
 const getPhoneSeller = async (req,res)=>{

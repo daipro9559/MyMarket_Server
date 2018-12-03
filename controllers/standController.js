@@ -50,7 +50,7 @@ const addItemToStand = async (req,res)=>{
     let err, item={},body = req.body
     // get stand detail
     if (body.standID) {
-        [err,standObject] = await to(standService.getStandDetail(body.standID))
+        [err,standObject] = await to(standService.getStandDetail(body.standID));
         if (err){
             return ReE(res,err,status.NOT_IMPLEMENTED)
         }
@@ -65,7 +65,10 @@ const addItemToStand = async (req,res)=>{
     item.needToSell = body.needToSell;
     item.categoryID = body.categoryID;
     item.userID = req.user.userID;
-    [err,item.images] = await to(util.saveImages(req.files,item.userID,CONFIG.image_item_path))
+    [err,item.images] = await to(util.saveImages(req.files,item.userID,CONFIG.image_item_path));
+    if (err){
+        return ReE(res,err,status.NOT_IMPLEMENTED)
+    }
     let itemAdded
     [err,itemAdded] = await to(req.user.createItem(item))
     if (err){

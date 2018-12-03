@@ -15,24 +15,32 @@ module.exports = (sequelize, DataTypes) => {
         radius:{
             type:DataTypes.FLOAT,
             allowNull:true,
+            defaultValue:10
         },
         districtID:{
             type:DataTypes.INTEGER,
-            allowNull:true
+            allowNull:true,
+            defaultValue:1
         },
         provinceID:{
             type:DataTypes.INTEGER,
-            allowNull:true
+            allowNull:true,
+            defaultValue:1
         },
         categoryID:{
             type:DataTypes.INTEGER,
-            allowNull:true
+            allowNull:true,
+            defaultValue:1
         },
         createdAt: DataTypes.DATE,
         updatedAt: DataTypes.DATE
     });
     ConditionNotify.associate = function(models){
         this.belongsTo(models.User, {foreignKey:'userID'})
+        this.belongsTo(models.District, {foreignKey:'districtID'})
+        this.belongsTo(models.Province, {foreignKey:'provinceID'})
+        this.belongsTo(models.Category, {foreignKey:'categoryID'})
+
     }
     return ConditionNotify
 }

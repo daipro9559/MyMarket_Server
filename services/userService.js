@@ -1,3 +1,4 @@
+'use strict'
 const validator = require('validator')
 const { to, TE } = require('./utilService')
 const { User } = require('../models')
@@ -25,23 +26,23 @@ module.exports.createUser = createUser
 const authUser = async function (userInfo) {
     if (!userInfo.email) TE('Please enter email to login');
     if (!userInfo.password) TE('Please enter password to login');
-    let user
+    let user,err
     [err, user] = await to(User.findOne(
         {
             where: {
                 email: userInfo.email
             }
-        }))
+        }));
     if (err) {
         TE('Not register');
     }
-    [err, user] = await to(user.comparePassword(userInfo.password))
+    [err, user] = await to(user.comparePassword(userInfo.password));
     if (err) {
         TE(err.message);
     }
     user.tokenFireBase = userInfo.tokenFireBase
     let userUpdate
-    [err, userUpdate] = await to (user.save())
+    [err, userUpdate] = await to (user.save());
     if (err){
         TE(err)
     }
@@ -113,14 +114,11 @@ var getAllUser = async ()=>{
 module.exports.getAllUser = getAllUser
 const changePassword = async (user,userInput)=>{
     // let user,data
-    let oldPass = userInput.oldPass,newPass = userInput.newPass
+    let oldPass = userInput.oldPassword,newPass = userInput.newPassword
     let err,result
     [err,result] = await to( user.comparePassword(oldPass))
     if (err) {
         TE(err)
-    }
-    if (!result){
-        TE("password incorrect!")
     }
     user.set({password:newPass})
     [err,user] = await to(user.save())

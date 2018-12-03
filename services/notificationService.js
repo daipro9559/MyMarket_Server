@@ -1,7 +1,7 @@
 'use strict'
 const {to,TE} = require('../services/utilService')
 const CONFIG = require('../config/conf')
-const {Category,Item,District,sequelize,User,Notification,UserNotification,ConditionNotify} = require('../models')
+const {Category,Province,Item,District,sequelize,User,Notification,UserNotification,ConditionNotify} = require('../models')
 const Sequelize = require('sequelize')
 const Op = Sequelize.Op
 const fs = require('fs');
@@ -88,5 +88,51 @@ module.exports.deleteNotification = deleteNotification
 
 
 var getConditionNotify = async (userId)=>{
-  
+  let err, result
+  [err,result] = await to(ConditionNotify.findOrCreate({
+    where:{
+      userID : userId
+    }
+  }))
+  if (err){
+    TE(err)
+  }
+  let condition
+  [err,condition] = await to(ConditionNotify.findOne({
+    where:{
+      conditionID : result[0].conditionID
+    }
+    ,
+    include:[
+      {
+        model:Category
+      },
+      {
+        model:District
+      },
+      {
+        model:Province
+      }
+    ]
+  }))
+  return condition
 }
+module.exports.getConditionNotify = getConditionNotify
+
+var saveSettingCondition = async(conditionObject)=>{
+  let err,result
+  [err, result] = await to(ConditionNotify.update(
+    {
+      categoryID: conditionObject.categoryID,
+      districtID: conditionObject.districtID,
+      provinceID: conditionObject.provinceID,
+      isEnable:conditionObject.isEnable
+    },
+    { where: { conditionID: conditionObject.conditionID } }
+  ))
+  if (err){
+    TE(err)
+  }
+  return result
+}
+module.exports.saveSettingCondition = saveSettingCondition

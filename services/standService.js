@@ -1,7 +1,7 @@
 'use strict'
 const {to,TE} = require('../services/utilService')
 const CONFIG = require('../config/conf')
-const {Address,Stand,sequelize,User,Sequelize,UserStandFollow} = require('../models')
+const {Address,Stand,sequelize,User,Sequelize,UserStandFollow,ConditionNotify} = require('../models')
 const Op = Sequelize.Op
 
 var createStand = async(stand)=>{
@@ -125,7 +125,14 @@ const getAllUserFollowStand = async (standId)=>{
         include:[
             {
                 model: User,
-                attributes: ['userID','tokenFireBase']
+                attributes: ['userID','tokenFireBase'],
+                include:[{
+                    model : ConditionNotify,
+                    where:{
+                        isEnable:true
+                    }
+                }
+                ]
             }
         ]
     }))

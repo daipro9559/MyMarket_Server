@@ -1,6 +1,6 @@
 'use strict'
 const bcrypt = require('bcrypt')
-const {to}  = require('../services/utilService')
+const {to,TE}  = require('../services/utilService')
 const CONFIG = require('../config/conf')
 const fs = require('fs')
 const mkdirp = require('mkdirp');
@@ -61,11 +61,10 @@ const asyncDeleteFiles = (imagePaths) => {
         fs.unlink("public/" + element, (err) => {
           if (err) {
             reject(err)
-          }else{
-            resolve(true)
           }
         })
       })
+      resolve(true)
     } else if (imagePaths != null && imagePaths.length > 0) {
         fs.unlink("public/" + element, (err) => {
           if (err) {
@@ -93,17 +92,24 @@ const saveImages = async (imageFiles,userID,parent) => {
     var imagePath = [], imagePathApi = []
     if (Array.isArray(files)) {
       for (var i = 0; i < files.length; i++) {
-        var path = getImagePath(userID, files[i].name, parent)
-        imagePath.push(path)
-        imagePathApi.push(path.substr(7, path.length))
-       [err,result] = await to( files[i].mv(path))
+        var path = getImagePath(userID, files[i].name, parent);
+        imagePath.push(path);
+        imagePathApi.push(path.substr(7, path.length));
+        [err, result] = await to(files[i].mv(path))
+        if (err) {
+          TE(err)
+        }
       }
     } else {
-      var path = getImagePath(userID, files.name, CONFIG.image_item_path)
-      imagePath.push(path)
-      imagePathApi.push(path.substr(7, path.length))
-      [err,result] = await to( files[i].mv(path))
+      var path = getImagePath(userID, files.name, CONFIG.image_item_path);
+      imagePath.push(path);
+      imagePathApi.push(path.substr(7, path.length));
+      [err, result] = await to(files.mv(path))
+      if (err) {
+        TE(err)
+      }
     }
+    
     return JSON.stringify(imagePathApi);//convert array image path to json
   } else {
     return JSON.stringify([])
