@@ -114,20 +114,6 @@ const addItemToStand = async (req,res)=>{
                 }
                 let userNoti ={}
                 user.addNotification(notificationAdded)
-                // userNoti.userID = user.userID
-                // userNoti.notificationID = notificationAdded.notificationID
-                // notificationService.saveUserNotification(userNoti).then(result=>{
-                //     console.log("save userNotificaion success")
-                // }).catch(err=>{
-                //     console.log("save userNotificaion error: "+err.message)
-                // })
-                // notificationAdded.setUsers([req.user])
-                //     .then(result => {
-                //         console.log(result)
-
-                //     }).catch(err => {
-                //         console.log(err)
-                //     })
             })
 
     

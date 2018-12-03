@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
-        // type =  : notification from user, type = 2: notification from stand
+        // type = 1 : notification from user, type = 2: notification from stand, type 3: notification request buy item
         type:{
             type:DataTypes.INTEGER, 
             allowNull:false,

@@ -108,7 +108,7 @@ module.exports.getItems = getItems
 
 const getItemDetail = async(req,res)=>{
     let err,item
-    [err,item] = await to(itemService.getItemDetail(req.params.itemID))
+    [err,item] = await to(itemService.getItemDetail(req.user.userID,req.params.itemID))
     if (err){
         return ReE(res,err,status.NOT_IMPLEMENTED)
     }

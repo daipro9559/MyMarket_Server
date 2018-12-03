@@ -131,7 +131,7 @@ const getItems = async (userId, queries) => {
 }
 module.exports.getItems = getItems
 
-const getItemDetail = async(itemId)=>{
+const getItemDetail = async(userId,itemId)=>{
     let err,item 
     [err,item] = await to(Item.findOne({
         where:{
@@ -145,6 +145,17 @@ const getItemDetail = async(itemId)=>{
     }))
     if (err){
         TE(err)
+    }
+    // check if item is marked
+    let itemMarked
+    [err,itemMarked] = await to(UserItemMarked.findOne({
+        where:{
+            itemID: item.itemID,
+            userID:userId
+        }
+    }))
+    if (!err && itemMarked){
+        item.isMarked = true
     }
     return item
 }
