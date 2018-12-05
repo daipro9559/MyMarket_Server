@@ -103,8 +103,8 @@ const addItemToStand = async (req,res)=>{
         notification.body = itemAdded.name
         notificationService.saveNotification(notification).then(notificationAdded => {
             users.forEach(user => {
-                if (user.tokenFireBase) { // when user logout, no send notification
-                    sendStandNotification(user.tokenFireBase, dataNotification)
+                if (user.tokenFirebase) { // when user logout, no send notification
+                    sendStandNotification(user.tokenFirebase, dataNotification)
                         .then(response => {
                             console.log("")
                         })
@@ -112,7 +112,6 @@ const addItemToStand = async (req,res)=>{
                             console.log(err)
                         })
                 }
-                let userNoti ={}
                 user.addNotification(notificationAdded)
             })
 

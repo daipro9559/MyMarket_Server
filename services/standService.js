@@ -125,7 +125,7 @@ const getAllUserFollowStand = async (standId)=>{
         include:[
             {
                 model: User,
-                attributes: ['userID','tokenFireBase'],
+                attributes: ['userID','tokenFirebase'],
                 include:[{
                     model : ConditionNotify,
                     where:{

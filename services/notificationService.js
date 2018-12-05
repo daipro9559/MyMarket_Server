@@ -35,7 +35,7 @@ var saveNotification = async (notifyObject)=>{
     let err,notification
     [err,notification] = await to(Notification.create(notifyObject))
     if (err){
-        TE(err)
+        TE(err.message)
     }
     return notification
 }
@@ -136,3 +136,8 @@ var saveSettingCondition = async(conditionObject)=>{
   return result
 }
 module.exports.saveSettingCondition = saveSettingCondition
+
+const requestBuyItem = async (itemId,sellerId)=>{
+  
+}
+module.exports.requestBuyItem = requestBuyItem

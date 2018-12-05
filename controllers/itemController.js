@@ -117,7 +117,7 @@ const getItemDetail = async(req,res)=>{
 module.exports.getItemDetail = getItemDetail
 
 // marked item 
-var markItem = async (req,res)=>{
+const markItem = async (req,res)=>{
     let err,userItem
     if (!req.body.itemID){
         return ReE(res," not select item",status.NOT_IMPLEMENTED)
@@ -131,7 +131,7 @@ var markItem = async (req,res)=>{
 }
 module.exports.markItem = markItem
 
-var getMarkedItems = async(req,res)=>{
+const getMarkedItems = async(req,res)=>{
     let err,items 
     [err,items] = await to(itemService.getItemsMarked(req.user))
     if(err){

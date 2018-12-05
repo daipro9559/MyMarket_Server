@@ -21,7 +21,7 @@ module.exports.login = async (req, res) => {
     let userInfo = {};
     userInfo.email = req.body.email;
     userInfo.password = req.body.password;
-    userInfo.tokenFireBase = req.body.tokenFireBase;
+    userInfo.tokenFirebase = req.body.tokenFirebase;
     [err,user] = await to(userService.authUser(userInfo));
     if (err) {
         return ReE(res, err, status.NOT_IMPLEMENTED)
@@ -92,8 +92,8 @@ const getProfile = async (req,res)=>{
     if (err){
         return ReE(res,err.message,status.NOT_IMPLEMENTED)
     }
-    user.password =""
-
+    user.password = undefined
+    user.tokenFirebase = undefined
     return ReS(res,user.toWeb(),status.OK)
 }
 module.exports.getProfile = getProfile

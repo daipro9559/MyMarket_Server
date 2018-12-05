@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: DataTypes.UUIDV4,
             primaryKey: true,
         },
-        // type = 1 : notification from user, type = 2: notification from stand, type 3: notification request buy item
+        // type = 1 : notification from user, type = 2: notification from stand, type 3: notification confirm buy item
         type:{
             type:DataTypes.INTEGER, 
             allowNull:false,
@@ -21,8 +21,8 @@ module.exports = (sequelize, DataTypes) => {
             type:DataTypes.STRING
         },
         icon:{
-            allowNull:false,
-            type:DataTypes.STRING
+            type: DataTypes.STRING,
+            allowNull: true
         },
         data:{
             allowNull:false,

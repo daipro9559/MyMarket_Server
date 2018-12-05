@@ -46,12 +46,12 @@ router.get('/', function(req, res, next) {
   //item case
   router.get('/categories',passport.authenticate('jwt', {session:false}),itemController.getAllCategory)
   router.get('/items',passport.authenticate('jwt',{session:false}),itemController.getItems)
-  router.get('/items/:itemID',passport.authenticate('jwt',{session:false}),itemController.getItemDetail)
   router.post('/items',passport.authenticate('jwt',{session:false}),itemController.addItem)
   router.post('/items/mark',passport.authenticate('jwt',{session:false}),itemController.markItem)
   router.get('/items/mark',passport.authenticate('jwt',{session:false}),itemController.getMarkedItems)
   router.delete('/items/mark/:itemID',passport.authenticate('jwt',{session:false}),itemController.unMarkItem)
   router.delete('/items/:itemID',passport.authenticate('jwt',{session:false}),itemController.deleteItem)
+  router.get('/items/:itemID',passport.authenticate('jwt',{session:false}),itemController.getItemDetail)
   // router.get('items/myItems',passport.authenticate('jwt',{session:false}),itemController.getItems)
   // address case
   router.get('/provinces',passport.authenticate('jwt', {session:false}),addressController.getAllProvince)
@@ -71,5 +71,5 @@ router.get('/notifications', passport.authenticate('jwt', { session: false }), n
 router.get('/conditionNotify', passport.authenticate('jwt', { session: false }), notificationController.getConditionNotify)
 router.post('/conditionNotify/:conditionID', passport.authenticate('jwt', { session: false }),notificationController.saveSettingCondition)
 router.delete('/notifications/:notificationID', passport.authenticate('jwt', { session: false }),notificationController.deleteNotification)
-
+router.post('/notifications/requestBuyItem',passport.authenticate('jwt', { session: false }),notificationController.requestByItem)
 module.exports = router

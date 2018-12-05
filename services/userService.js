@@ -40,14 +40,14 @@ const authUser = async function (userInfo) {
     if (err) {
         TE(err.message);
     }
-    user.tokenFireBase = userInfo.tokenFireBase
+    user.tokenFirebase = userInfo.tokenFirebase
     let userUpdate
     [err, userUpdate] = await to (user.save());
     if (err){
         TE(err)
     }
      userUpdate.password = undefined
-     userUpdate.tokenFireBase = undefined
+     userUpdate.tokenFirebase = undefined
     return userUpdate
 }
 module.exports.authUser = authUser
@@ -132,11 +132,7 @@ module.exports.changePassword = changePassword
 // userID 
 const getProfile = async (userId)=>{
     let err,user
-    [err,user] = await to(User.findOne(
-    {
-        where:{userID:userId},
-        attributes:['name','phone','avatar']
-    }))
+    [err,user] = await to(User.findOne({ where:{userID:userId}}));
     if (err){
         TE(err)
     }
@@ -155,7 +151,7 @@ module.exports.updateToSeller = updateToSeller
 // when user logout delete firebase token , it need for don't receive notification
 const logout = async (user)=>{
     let err,userUpdated
-    [err,user] = await to(user.update({tokenFireBase:null}))
+    [err,user] = await to(user.update({tokenFirebase:null}))
     if (err){TE(err)}
     return  true
 }

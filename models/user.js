@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       type: DataTypes.UUID
     },
-    tokenFireBase:{
+    tokenFirebase:{
       type: DataTypes.STRING,
       allowNull: true, // null when user logout
       unique: true,
