@@ -5,6 +5,7 @@ const itemController = require('../controllers/itemController')
 const standController = require('../controllers/standController')
 const addressController = require('../controllers/addressController')
 const notificationController = require('../controllers/notificationController')
+const transactionController = require('../controllers/transactionController')
 const multer = require('multer')
 const passport = require('passport')
 const path = require('path')
@@ -72,4 +73,8 @@ router.get('/conditionNotify', passport.authenticate('jwt', { session: false }),
 router.post('/conditionNotify/:conditionID', passport.authenticate('jwt', { session: false }),notificationController.saveSettingCondition)
 router.delete('/notifications/:notificationID', passport.authenticate('jwt', { session: false }),notificationController.deleteNotification)
 router.post('/notifications/requestBuyItem',passport.authenticate('jwt', { session: false }),notificationController.requestByItem)
+
+//transaction
+// confirm transaction
+router.post('/transactions',passport.authenticate('jwt', { session: false }),transactionController.confirmTransaction)
 module.exports = router

@@ -89,6 +89,7 @@ const addItemToStand = async (req,res)=>{
     if (users.length > 0) {
         let dataNotification = {}
         dataNotification.itemID = itemAdded.itemID
+        dataNotification.type= 2
         dataNotification.body = itemAdded.name + '\n Click để xem !'
         dataNotification.standID = standObject.standID
         dataNotification.icon = standObject.image
@@ -139,7 +140,8 @@ var sendStandNotification = (token,data)=>{
             },  
             data: {  //you can send only notification or only data(or include both)
                 standID: data.standID,
-                itemID: data.itemID
+                itemID: data.itemID,
+                type:data.type
             }
         }   
         fcm.send(message, function(err, response){

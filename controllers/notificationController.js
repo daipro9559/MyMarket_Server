@@ -10,7 +10,7 @@ const FCM = require('fcm-node')
 const fcm = new FCM(CONFIG.serverKey)
 const getNotifications = async (req,res)=>{
     let err,notifications
-    [err,notifications] = await to (req.user.getNotifications())
+    [err,notifications] = await to (notificationService.getNotifications(req.user.userID,req.query.page))
     if (err){
         return ReE(res,err,status.NOT_FOUND)
     }
@@ -63,9 +63,11 @@ const requestByItem = async(req,res)=>{
     price = req.body.price
     notification.title = req.user.name +" muốn xác nhận đã giao dịch với bạn!"
     notification.icon = req.user.avatar
-    notification.body = "Mặt hàng : " +itemName +"\n Giá: "+ price
+    notification.body = "Mặt hàng : " +itemName +"\nGiá: "+ price;
+    data.type = 3;
     data.itemID=req.body.itemID;
     data.userID = req.user.userID;// id of user request confirm
+    data.price = price;
     notifications.notification = notification;
     notifications.data = data;
     // get seller

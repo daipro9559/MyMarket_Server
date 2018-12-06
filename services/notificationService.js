@@ -9,19 +9,19 @@ const util = require('../helper/util')
 
 var getNotifications = async (userId,page)=>{
     let err,notifications
-    [err,notifications] = await to(User.findAll({
-      where:{
-        userID:userId
-      },
+    [err,notifications] = await to(Notification.findAll({
       include: [{
-        model: Notification,
+        model: User,
         through:{
-          
+          where:{
+            userID:userId
+          },
+          attributes:[]
         }
-        // order: [ ['updatedAt', 'DESC']],
-        // offset: page * CONFIG.page_size_item,
-        // limit: CONFIG.page_size_item
-      }]
+      }],
+      order: [['updatedAt', 'DESC']],
+      offset: page * CONFIG.page_size_item,
+      limit: CONFIG.page_size_item
     }))
     if (err){
       TE(err)
