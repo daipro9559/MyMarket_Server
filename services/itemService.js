@@ -245,3 +245,19 @@ const deleteItem = async (itemId)=>{
 
 module.exports.deleteItem = deleteItem
 
+const addItemToStandFromTransaction = async(userId,itemId,standId)=>{
+    let err,result
+    [err,result] = await to(Item.update(
+        {
+            standID: standId,
+            userID: userId
+        },
+        { where: { itemID: itemId } }
+    ))
+    if(err){
+        TE(err.message)
+    }
+    return result
+}
+module.exports.addItemToStandFromTransaction = addItemToStandFromTransaction
+

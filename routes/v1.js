@@ -61,6 +61,7 @@ router.get('/', function(req, res, next) {
   //create
   router.post('/stands',passport.authenticate('jwt',{session:false}),standController.createStand)
   router.post('/stands/items',passport.authenticate('jwt',{session:false}),standController.addItemToStand)
+  router.put('/stands/:standID/items',passport.authenticate('jwt',{session:false}),standController.addItemToStandFromTransaction)
   router.get('/stands',passport.authenticate('jwt', {session:false}),standController.getStands)
   router.get('/stands/myStands',passport.authenticate('jwt', {session:false}),standController.getMyStands)
   router.delete('/stands/:standID',passport.authenticate('jwt', {session:false}),standController.deleteStand)
@@ -77,4 +78,6 @@ router.post('/notifications/requestBuyItem',passport.authenticate('jwt', { sessi
 //transaction
 // confirm transaction
 router.post('/transactions',passport.authenticate('jwt', { session: false }),transactionController.confirmTransaction)
+router.get('/transactions',passport.authenticate('jwt', { session: false }),transactionController.getTransaction)
+
 module.exports = router

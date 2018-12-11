@@ -30,7 +30,7 @@ var createStand = async(req,res)=>{
     // }else{
     //     stand.image = null
     // }
-    [err,stand.image] = await to(util.saveImages(req.files,item.userID,CONFIG.image_stand_path))
+    [err,stand.image] = await to(util.saveImages(req.files,req.user.userID,CONFIG.image_stand_path))
     stand.userID = req.user.userID
     stand.name = body.name
     stand.description = body.description
@@ -221,3 +221,13 @@ const deleteStand = async(req,res)=>{
     return ReS(res,null,status.OK,"Delete stand completed")
 }
 module.exports.deleteStand = deleteStand
+
+const addItemToStandFromTransaction = async (req,res)=>{
+    let err,result
+    [err,result] = await to(itemService.addItemToStandFromTransaction(req.user.userID,req.body.itemID,req.params.standID))
+    if (err){
+        return ReE(res,err,status.NOT_IMPLEMENTED)
+    }
+    return ReS(res,null,status.OK,"Add item to stand completed")
+}
+module.exports.addItemToStandFromTransaction = addItemToStandFromTransaction

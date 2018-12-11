@@ -9,10 +9,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.UUID
       },
     price: DataTypes.BIGINT(11),
-    itemID:{
-        type: DataTypes.UUID,
-        allowNull: false
-    },
     sellerID :{
         type: DataTypes.UUID,
         allowNull: false
@@ -26,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   Transaction.associate = function(models) {
     // associations can be defined here
-    this.hasOne(models.Item,{foreignKey:'itemID'})
+    this.belongsTo(models.Item,{foreignKey:'itemID'})
   };
   return Transaction;
 };

@@ -158,3 +158,4 @@ const getStandDetail = async (standId)=>{
     return stand
 }
 module.exports.getStandDetail = getStandDetail
+

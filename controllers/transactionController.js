@@ -21,3 +21,13 @@ const confirmTransaction = async (req,res)=>{
     return ReS(res,null,status.OK,"Xác nhận yêu cầu giao dịch thành công")
 }
 module.exports.confirmTransaction = confirmTransaction
+
+const getTransaction = async (req,res)=>{
+    let err, transactions
+    [err,transactions] = await to(transactionService.getTransaction(req.user.userID,req.query))
+    if (err){
+        return ReE(res,err,status.NOT_FOUND)
+    }
+    return ReS(res,transactions,status.OK,"",util.checkLastPage(transactions.length))
+}
+module.exports.getTransaction = getTransaction

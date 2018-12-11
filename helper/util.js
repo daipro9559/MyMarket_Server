@@ -101,7 +101,7 @@ const saveImages = async (imageFiles,userID,parent) => {
         }
       }
     } else {
-      var path = getImagePath(userID, files.name, CONFIG.image_item_path);
+      var path = getImagePath(userID, files.name, parent);
       imagePath.push(path);
       imagePathApi.push(path.substr(7, path.length));
       [err, result] = await to(files.mv(path))
