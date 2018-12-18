@@ -120,7 +120,7 @@ var getConditionNotify = async (userId)=>{
 module.exports.getConditionNotify = getConditionNotify
 
 var saveSettingCondition = async(conditionObject)=>{
-  let err,result
+  let err,result;
   [err, result] = await to(ConditionNotify.update(
     {
       categoryID: conditionObject.categoryID,
@@ -129,11 +129,11 @@ var saveSettingCondition = async(conditionObject)=>{
       isEnable:conditionObject.isEnable
     },
     { where: { conditionID: conditionObject.conditionID } }
-  ))
+  ));
   if (err){
-    TE(err)
+    TE(err.message);
   }
-  return result
+  return result;
 }
 module.exports.saveSettingCondition = saveSettingCondition
 

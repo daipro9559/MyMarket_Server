@@ -6,6 +6,7 @@ const standController = require('../controllers/standController')
 const addressController = require('../controllers/addressController')
 const notificationController = require('../controllers/notificationController')
 const transactionController = require('../controllers/transactionController')
+const commentController = require('../controllers/commentController')
 const multer = require('multer')
 const passport = require('passport')
 const path = require('path')
@@ -43,6 +44,7 @@ router.get('/', function(req, res, next) {
   router.get('/user/profile',passport.authenticate('jwt', {session:false}),userController.getProfile)
   router.get('/user/profile/:userID',passport.authenticate('jwt', {session:false}),userController.getProfile)
   router.post('/user/updateToSeller',passport.authenticate('jwt', {session:false}),userController.updateToSeller)
+  router.post('/user/addAddress',passport.authenticate('jwt', {session:false}),userController.addAddress)
 
   //item case
   router.get('/categories',passport.authenticate('jwt', {session:false}),itemController.getAllCategory)
@@ -67,6 +69,8 @@ router.get('/', function(req, res, next) {
   router.delete('/stands/:standID',passport.authenticate('jwt', {session:false}),standController.deleteStand)
   router.post('/stands/follow',passport.authenticate('jwt',{session:false}),standController.followStand)
   router.delete('/stands/follow/:standID',passport.authenticate('jwt',{session:false}),standController.unFollow)
+  router.get('/stands/:standID/comments',passport.authenticate('jwt',{session: false}),commentController.getComments)
+  router.post('/stands/:standID/comments',passport.authenticate('jwt',{session: false}),commentController.createComment)
 
 // case notifications
 router.get('/notifications', passport.authenticate('jwt', { session: false }), notificationController.getNotifications)
@@ -79,5 +83,8 @@ router.post('/notifications/requestBuyItem',passport.authenticate('jwt', { sessi
 // confirm transaction
 router.post('/transactions',passport.authenticate('jwt', { session: false }),transactionController.confirmTransaction)
 router.get('/transactions',passport.authenticate('jwt', { session: false }),transactionController.getTransaction)
+
+// admin
+router.get('/admin/users',passport.authenticate('jwt', { session: false }),userController.getUsers)
 
 module.exports = router

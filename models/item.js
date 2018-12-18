@@ -42,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
     // associations can be defined here
     this.belongsTo(models.Category,{foreignKey:'categoryID'})
     this.belongsTo(models.User, {foreignKey:'userID',onDelete: 'CASCADE', hooks: true})
-    this.belongsTo(models.Address, {foreignKey: 'addressID'})
+    this.belongsTo(models.Address, {foreignKey: 'addressID'})// dont use onDelete because item will use address of stand when item is added tostand
     this.belongsTo(models.Stand,{foreignKey:'standID',onDelete: 'CASCADE', hooks: true})
     this.hasMany(models.UserItemMarked,{foreignKey: 'itemID'})
 

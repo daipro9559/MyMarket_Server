@@ -2,6 +2,7 @@
 const userService = require('../services/userService')
 const { to, ReE, ReS } = require('../services/utilService')
 const status = require('http-status')
+const util = require('../helper/util')
 
 module.exports.create = async (req, res) => {
     var body = req.body
@@ -117,3 +118,30 @@ const logout = async (req,res)=>{
     return ReS(res,null,status.OK,"Logout completed!")
 }
 module.exports.logout = logout
+
+// admin key
+
+const getUsers = async(req,res)=>{
+    let err,users
+    if(req.user.userRoleID != 1){
+        return ReE(res,"you is not admin",status.NOT_ACCEPTABLE)
+    }
+    [err,users] = await to(userService.getUsers(req.query))
+    if (err){
+        return ReE(res,err,status.NOT_ACCEPTABLE)
+    }
+    return ReS(res,users,status.OK,"get User completed ",util.checkLastPage(users.length))
+}
+module.exports.getUsers = getUsers
+
+//add Address when first Login
+// it will add province id and district id to conditionNotification  
+const addAddress = async(req,res)=>{
+    let err, updateResult 
+    [err,updateResult] = await to(userService.addAddress (req.user,req.body));
+    if (err){
+        return  ReE(res,err,status.NOT_IMPLEMENTED)
+    }
+    return ReS(res,null,status.OK)
+}
+module.exports.addAddress = addAddress

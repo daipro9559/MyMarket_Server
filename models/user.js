@@ -67,6 +67,7 @@ module.exports = (sequelize, DataTypes) => {
     this.hasMany(models.UserItemMarked,{foreignKey: 'userID'})
     this.hasMany(models.UserStandFollow,{foreignKey: 'userID'})
     this.belongsTo(models.Address, {foreignKey: 'addressID',allowNull:true})
+    this.belongsTo(models.UserRole, {foreignKey: 'userRoleID',allowNull:false})
     this.belongsToMany(models.Notification, {through: 'UserNotifications',foreignKey: 'userID'})
     this.hasOne(models.ConditionNotify,{foreignKey:'userID'})
     this.hasMany(models.Comment,{foreignKey: 'userID'})

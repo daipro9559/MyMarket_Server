@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       primaryKey: true,
       unique: true,
-      type: DataTypes.INTEGER
+      type: DataTypes.BIGINT                      
       },
     address: {
       type:DataTypes.STRING,

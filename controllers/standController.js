@@ -18,18 +18,6 @@ var createStand = async(req,res)=>{
     if (err){
         ReE(res,err,status.NOT_IMPLEMENTED)
     }
-    // if (req.files) {
-    //     var files = req.files.image
-    //     let  imagePathApi 
-    //     let path = util.getImagePath(req.user.userID, files.name, CONFIG.image_stand_path)
-    //     imagePathApi = path.substr(7, path.length)
-    //     files.mv(path, (err) => {
-    //         console.log(err)
-    //     })
-    //     stand.image = imagePathApi
-    // }else{
-    //     stand.image = null
-    // }
     [err,stand.image] = await to(util.saveImages(req.files,req.user.userID,CONFIG.image_stand_path))
     stand.userID = req.user.userID
     stand.name = body.name
@@ -79,49 +67,46 @@ const addItemToStand = async (req,res)=>{
     // if (standID =! null) => notification to user follow
     //send notification
     
-    let users
-    [err, users] = await to(standService.getAllUserFollowStand(body.standID))
-    if (err) {
-        console.log("khong the lay danh sach user")
-    }
-    
+    let users;
+    [err, users] = await to(standService.getAllUserFollowStand(body.standID));
+    if (err != null) {
+        console.log("khong the lay danh sach user");
+    }else{
     // save notification if at least one user followed this stand
-    if (users.length > 0) {
-        let dataNotification = {}
-        dataNotification.itemID = itemAdded.itemID
-        dataNotification.type= 2
-        dataNotification.body = itemAdded.name + '\n Click để xem !'
-        dataNotification.standID = standObject.standID
-        dataNotification.icon = standObject.image
-        dataNotification.title = standObject.name + " vừa đăng một tin mới vào gian hàng của mình!"
-        // save notification to database
-        let notification = {}, objectData = {}
-        notification.type = 2
-        notification.title = standObject.name + " đã đăng một tin vào gian hàng của mình"
-        notification.icon = dataNotification.icon
-        objectData.itemID = dataNotification.itemID
-        notification.data = JSON.stringify(objectData)
-        notification.body = itemAdded.name
-        notificationService.saveNotification(notification).then(notificationAdded => {
-            users.forEach(user => {
-                if (user.tokenFirebase) { // when user logout, no send notification
-                    sendStandNotification(user.tokenFirebase, dataNotification)
-                        .then(response => {
-                            console.log("")
-                        })
-                        .catch(err => {
-                            console.log(err)
-                        })
-                }
-                user.addNotification(notificationAdded)
+        if (users.length > 0) {
+            let dataNotification = {};
+            dataNotification.itemID = itemAdded.itemID;
+            dataNotification.type = 2;
+            dataNotification.body = itemAdded.name + '\n Click để xem !'
+            dataNotification.standID = standObject.standID;
+            dataNotification.icon = standObject.image[0];
+            dataNotification.title = standObject.name + " vừa đăng một tin mới vào gian hàng của mình!";
+            // save notification to database
+            let notification = {}, objectData = {};
+            notification.type = 2;
+            notification.title = standObject.name + " đã đăng một tin vào gian hàng của mình";
+            notification.icon = dataNotification.icon;
+            objectData.itemID = dataNotification.itemID;
+            notification.data = JSON.stringify(objectData);
+            notification.body = itemAdded.name;
+            notificationService.saveNotification(notification).then(notificationAdded => {
+                users.forEach(user => {
+                    if (user.tokenFirebase) { // when user logout, no send notification
+                        sendStandNotification(user.tokenFirebase, dataNotification)
+                            .then(response => {
+                                console.log("");
+                            })
+                            .catch(err => {
+                                console.log(err);
+                            })
+                    }
+                    user.addNotification(notificationAdded);
+                })
+            }).catch(err => {
+                console.log(err);
             })
-
-    
-        }).catch(err => {
-
-        })
+        }
     }
-    
     return ReS(res,data,status.OK,"add item completed")
 }
 module.exports.addItemToStand = addItemToStand
@@ -231,3 +216,18 @@ const addItemToStandFromTransaction = async (req,res)=>{
     return ReS(res,null,status.OK,"Add item to stand completed")
 }
 module.exports.addItemToStandFromTransaction = addItemToStandFromTransaction
+
+
+const getStandsFollowed = async(req,res)=>{
+    let err,userStandsFollowed;
+    [err,userStandsFollowed] = await to(standService.getStandsFollowed(req.user.userID));
+    if (err){
+        return ReE(res,err,status.NOT_ACCEPTABLE)
+    }
+    let stands =[];
+    userStandsFollowed.forEach(element=>{
+        stands.push(element.Stand)
+    });
+    return ReS(res,stands,stands,status.OK)
+}
+module.exports.getStandsFollowed = getStandsFollowed

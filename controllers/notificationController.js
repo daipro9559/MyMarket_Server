@@ -42,7 +42,7 @@ var getConditionNotify = async (req,res)=>{
 module.exports.getConditionNotify = getConditionNotify
 
 var saveSettingCondition = async (req,res)=>{
-    let err, result,objectCondition={}
+    let err, result,objectCondition={};
     objectCondition.conditionID = req.params.conditionID;
     objectCondition.provinceID = req.body.provinceID;
     objectCondition.categoryID = req.body.categoryID;

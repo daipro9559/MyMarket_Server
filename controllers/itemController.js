@@ -1,6 +1,7 @@
 'use strict'
 const itemService = require('../services/itemService')
 const addressService = require('../services/addressService')
+const notificationService = require('../services/notificationService')
 const standService = require('../services/standService')
 const { to, ReE, ReS } = require('../services/utilService')
 const status = require('http-status')
@@ -19,64 +20,105 @@ const getAllCategory = async (req,res)=>{
 module.exports.getAllCategory = getAllCategory
 
 const addItem = async (req,res)=>{
-    let err, item={},address={},body = req.body
+    let err, item={},address={},body = req.body,user = req.user;
     if (body.standID) {
-        item.addressID = body.addressID
-        item.standID = body.standID
+        item.addressID = body.addressID;
+        item.standID = body.standID;
     } else {
         address.address = body.address
         address.districtID = body.districtID
         let addressAdded
         [err, addressAdded] = await to(addressService.addAddress(address));
         if (err) {
-            ReE(res, err, status.NOT_IMPLEMENTED)
+            ReE(res, err, status.NOT_IMPLEMENTED);
         }
-        item.addressID = addressAdded.addressID
+        item.addressID = addressAdded.addressID;
     }
-    item.name = body.name
-    item.price = body.price
-    item.description = body.description
-    item.needToSell = body.needToSell
-    item.categoryID = body.categoryID
-    item.userID = req.user.userID
-    let itemAdded
-    // if (req.files) {
-    //     var files = req.files.images
-    //     var imagePath = [], imagePathApi = []
-    //     if (Array.isArray(files)) {
-    //         for (var i = 0; i < files.length; i++) {
-    //             var path = util.getImagePath(item.userID, files[i].name,CONFIG.image_item_path)
-    //             imagePath.push(path)
-    //             imagePathApi.push(path.substr(7, path.length))
-    //             files[i].mv(path, (err) => {
-    //                 console.log(err)
-    //             })
-    //         }
-    //     } else {
-    //         var path = util.getImagePath(item.userID, files.name,CONFIG.image_item_path)
-    //         imagePath.push(path)
-    //         imagePathApi.push(path.substr(7, path.length))
-    //         files.mv(path, (err) => {
-    //             console.log(err)
-    //         })
-    //     }
-    //     item.images = JSON.stringify(imagePathApi);//convert array image path to json
-    // }else{
-    //     item.images = JSON.stringify([])
-    // }
+    item.name = body.name;
+    item.price = body.price;
+    item.description = body.description;
+    item.needToSell = body.needToSell;
+    item.categoryID = body.categoryID;
+    item.userID = req.user.userID;
+    let itemAdded;
     [err,item.images] = await to(util.saveImages(req.files,item.userID,CONFIG.image_item_path));
     if (err){
-        return ReE(res,err,status.NOT_IMPLEMENTED)
+        return ReE(res,err,status.NOT_IMPLEMENTED);
     }
-    [err,itemAdded] = await to(req.user.createItem(item))
+    [err,itemAdded] = await to(req.user.createItem(item));
     if (err){
-       return ReE(res,err,status.NOT_IMPLEMENTED)
+       return ReE(res,err,status.NOT_IMPLEMENTED);
     }
-    let data = {}
-    data.itemID = itemAdded.itemID
+    // send notification
+    let users,condition={};
+    condition.districtID = body.districtID;
+    condition.provinceID = body.provinceID;
+    condition.categoryID = body.categoryID
+    itemService.getAllUserForSendNotify(condition).then(users=>{
+        if (users.length > 0) {
+            let dataNotification = {};
+            dataNotification.itemID = itemAdded.itemID;
+            dataNotification.type= 1;
+            dataNotification.body = itemAdded.name + '\n Click để xem !';
+            dataNotification.icon = user.avatar;
+            dataNotification.title = user.name + " vừa đăng một tin mới !";
+            // save notification to database
+            let notification = {}, objectData = {};
+            notification.type = 1;
+            notification.title = dataNotification.title;
+            notification.icon = dataNotification.icon;
+            objectData.itemID = dataNotification.itemID;
+            notification.data = JSON.stringify(objectData);
+            notification.body = itemAdded.name;
+            notificationService.saveNotification(notification).then(notificationAdded => {
+                users.forEach(user => {
+                    if (user.tokenFirebase) { // when user logout, no send notification
+                        sendStandNotification(user.tokenFirebase, dataNotification)
+                            .then(response => {
+                                console.log("")
+                            })
+                            .catch(err => {
+                                console.log(err)
+                            })
+                    }
+                    user.addNotification(notificationAdded)
+                })
+            }).catch(err => {
+            })
+        }
+    });
+    let data = {};
+    data.itemID = itemAdded.itemID;
     return ReS(res,data,status.OK,"add item completed")
 }
 module.exports.addItem = addItem
+//send notification to client
+var sendStandNotification = (token,data)=>{
+    return new Promise((resolve, reject)=>{
+        let message = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
+            to: token, 
+            collapse_key: CONFIG.collapse_key,
+        
+            notification: {
+                icon:data.icon,
+                title: data.title,
+                body: data.body
+            },  
+            data: {  //you can send only notification or only data(or include both)
+                itemID: data.itemID,
+                type:data.type
+            }
+        }   
+        fcm.send(message, function(err, response){
+            if (err) {
+                reject(err.message)
+            } else {
+               resolve (response)
+            }
+        });
+    })
+    
+}
 
 const getItems =async (req,res)=>{
     let categoryID = req.query.categoryID

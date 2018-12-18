@@ -1,7 +1,7 @@
 'use strict'
 const validator = require('validator')
 const { to, TE } = require('./utilService')
-const { User } = require('../models')
+const { User,Address,District,ConditionNotify } = require('../models')
 const SendMailHelper = require('../helper/sendMail')
 const CONFIG = require('../config/conf')
 const {hashPassword} = require('../helper/util');
@@ -31,7 +31,10 @@ const authUser = async function (userInfo) {
         {
             where: {
                 email: userInfo.email
-            }
+            },
+            include:[{
+                model:Address
+            }]
         }));
     if (err) {
         TE('Not register');
@@ -132,7 +135,14 @@ module.exports.changePassword = changePassword
 // userID 
 const getProfile = async (userId)=>{
     let err,user
-    [err,user] = await to(User.findOne({ where:{userID:userId}}));
+    [err,user] = await to(User.findOne({
+         where:{userID:userId},
+        include: [
+            {
+                model: Address
+            }
+        ]
+        }));
     if (err){
         TE(err)
     }
@@ -156,3 +166,63 @@ const logout = async (user)=>{
     return  true
 }
 module.exports.logout = logout
+
+const getUsers = async(query)=>{
+    let err, users,page
+    if (!query.page){
+        page = 0
+    }else{
+        page = query.page
+    }
+    [err, users] = await to(User.findAll(
+        {
+            include: [
+                {
+                    model: Address,
+                    include: [
+                        {
+                            model: District,
+                        },
+                    ]
+                }
+            ],
+            order: [ ['createdAt', 'DESC']],
+            offset: page * CONFIG.page_size_item,
+            limit: CONFIG.page_size_item
+        }))
+    if (err) {
+        TE(err.message)
+    }
+    return users
+}
+module.exports.getUsers = getUsers
+
+const addAddress = async(user,body)=>{
+    let err,addressAdded;
+    [err,addressAdded] = await to(Address.create({
+        address : body.address,
+        districtID: body.districtID
+    }));
+    if (err){
+        TE(err.message)
+    }
+    let updateResult ;
+    user.addressID = addressAdded.addressID;
+    [err,updateResult] = await to(user.save())
+    if (err){
+        TE(err.message);
+    }
+    // update to conditionNotification
+    [err,updateResult] = await to( ConditionNotify.update(
+        {
+            districtID: body.districtID,
+            provinceID: body.provinceID
+        }, /* set attributes' value */
+        { where: { userID: user.userID }}
+      ));
+      if(err){
+          TE(err.message);
+      }
+    return updateResult
+}
+module.exports.addAddress = addAddress

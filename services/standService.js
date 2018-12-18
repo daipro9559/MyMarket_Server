@@ -58,24 +58,24 @@ var getStands = async (userId,queries)=>{
 module.exports.getStands = getStands
 
 const deleteStand = async(standId)=>{
-    let err,stand
+    let err,stand;
     [err,stand] = await to(Stand.findOne({
         where: {
             standID: standId
         }
-    }))
+    }));
     if (err){
-        TE(err)
+        TE(err);
     }
     if ( stand.image.length > 0){
         util.asyncDeleteFiles(item.images).then((result)=>{
             console.log("delete file completed")
         })
    }
-   let result
-   [err,result] = await to(stand.destroy())
+   let result;
+   [err,result] = await to(stand.destroy());
     if (err) {
-        TE(err)
+        TE(err);
     }
     return true
 }
@@ -83,21 +83,21 @@ module.exports.deleteStand = deleteStand
 
 
 var getUserStandFollowed = async (user)=>{
-    let err,userStand
-    [err,userStand] = await to(UserStandFollow.findAll({where:{userID:user.userID}}))
+    let err,userStand;
+    [err,userStand] = await to(UserStandFollow.findAll({where:{userID:user.userID}}));
     if (err){
-        TE(err)
+        TE(err);
     }
-    return userStand
+    return userStand;
 }
 module.exports.getUserStandFollowed = getUserStandFollowed
 var followStand = async (userId,standId)=>{
-    let err,userStand
-    [err,userStand] = await to (UserStandFollow.create({userID:userId,standID:standId}))
-    if(err){
-        TE(err)
+    let err, userStand;
+    [err, userStand] = await to(UserStandFollow.create({ userID: userId, standID: standId }));
+    if (err) {
+        TE(err);
     }
-        return userStand
+    return userStand;
 }
 module.exports.followStand = followStand
 
@@ -108,9 +108,9 @@ var unFollowStand = async (userId,standId)=>{
             userID: userId,
             standID: standId
         }
-    }))
+    }));
     if (err){
-        TE(err)
+        TE(err);
     }
     return true
 }
@@ -125,6 +125,11 @@ const getAllUserFollowStand = async (standId)=>{
         include:[
             {
                 model: User,
+                where:{
+                    tokenFirebase: {
+                        [Op.ne]: null
+                    }
+                },
                 attributes: ['userID','tokenFirebase'],
                 include:[{
                     model : ConditionNotify,
@@ -158,4 +163,24 @@ const getStandDetail = async (standId)=>{
     return stand
 }
 module.exports.getStandDetail = getStandDetail
+
+const getStandsFollowed = async(userId)=>{
+    let err, userStandFollowed;
+    [err,userStandFollowed] = await to(UserStandFollow.findAll({
+        where:{
+            userID: userId
+        },
+        include:[{
+            model:Stand,
+            include:[{
+                model:Address
+            }]
+        }]
+    }));
+    if (err){
+        TE(err.message);
+    }
+    return userStandFollowed;
+}
+module.exports.getStandsFollowed = getStandsFollowed
 

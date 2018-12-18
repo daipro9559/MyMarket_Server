@@ -1,7 +1,7 @@
 'use strict'
 const {to,TE} = require('../services/utilService')
 const CONFIG = require('../config/conf')
-const {Category,Item,Address,District,UserItemMarked,sequelize,User} = require('../models')
+const {Category,Item,Address,District,UserItemMarked,sequelize,User,ConditionNotify} = require('../models')
 const Sequelize = require('sequelize')
 const Op = Sequelize.Op
 const fs = require('fs');
@@ -260,4 +260,34 @@ const addItemToStandFromTransaction = async(userId,itemId,standId)=>{
     return result
 }
 module.exports.addItemToStandFromTransaction = addItemToStandFromTransaction
+
+// get all user for notification
+const getAllUserForSendNotify = async(condition)=>{
+    let err,users;
+    [err,users] = await to(User.findAll({
+        where:{
+            tokenFirebase: {
+                [Op.ne]: null
+            }
+        },
+        include:[
+            {
+                model: ConditionNotify,
+                where:{
+                    isEnable:true,
+                    categoryID:condition.categoryID,
+                    districtID : {
+                        [Op.in]: [0, condition.districtID]
+                    },
+                    provinceID:condition.provinceID
+                }
+            }
+        ]
+    }));
+    if (err){
+        TE(err.message);
+    }
+    return users;
+}
+module.exports.getAllUserForSendNotify = getAllUserForSendNotify
 
