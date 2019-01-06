@@ -49,6 +49,7 @@ router.get('/', function(req, res, next) {
   //item case
   router.get('/categories',passport.authenticate('jwt', {session:false}),itemController.getAllCategory)
   router.get('/items',passport.authenticate('jwt',{session:false}),itemController.getItems)
+  router.get('/items/findOnMap',passport.authenticate('jwt',{session:false}),itemController.findOnMap)
   router.post('/items',passport.authenticate('jwt',{session:false}),itemController.addItem)
   router.post('/items/mark',passport.authenticate('jwt',{session:false}),itemController.markItem)
   router.get('/items/mark',passport.authenticate('jwt',{session:false}),itemController.getMarkedItems)

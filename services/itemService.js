@@ -4,7 +4,6 @@ const CONFIG = require('../config/conf')
 const {Category,Item,Address,District,UserItemMarked,sequelize,User,ConditionNotify} = require('../models')
 const Sequelize = require('sequelize')
 const Op = Sequelize.Op
-const fs = require('fs');
 const util = require('../helper/util')
 
 const getCategories = async()=>{
@@ -290,4 +289,68 @@ const getAllUserForSendNotify = async(condition)=>{
     return users;
 }
 module.exports.getAllUserForSendNotify = getAllUserForSendNotify
+
+const findOnMap = async(userId, queries)=>{
+    let whereItem = {}, whereAddress = {};
+    whereItem.userID = {
+        [Op.ne]: userId
+    }
+    if (queries.categoryID) {
+        whereItem.categoryID = queries.categoryID
+    }
+    if (queries.isFree) {
+        whereItem.price = 0
+    } else {
+        if (queries.priceMin && queries.priceMax) {
+            whereItem.price = {
+                [Op.gte]: queries.priceMin,
+                [Op.lte]: queries.priceMax
+            }
+        } else if (queries.priceMax) {
+            whereItem.price = {
+                [Op.lte]: queries.priceMax
+            }
+        } else if (queries.priceMin) {
+            whereItem.price = {
+                [Op.gte]: queries.priceMin,
+            }
+        }
+    }
+    // let location = sequelize.literal(`ST_GeomFromText('POINT(${queries.latitude} ${queries.longitude})')`);
+    // let distance = sequelize.fn('ST_Distance_Sphere', sequelize.literal('location'), location);
+    let attributesAddress = Object.keys(Address.attributes);
+    // attributes.push([distance,'distance']);
+    let err, items, radius = parseInt(queries.radius);
+    // [err, items] = await to(Item.findAll({
+    //     where: whereItem
+    //     ,
+    //     include: [
+    //         {
+    //             model: Address,
+    //             attributes: { include: [[sequelize.literal("6371 * acos(cos(radians(" + queries.latitude + ")) * cos(radians(latitude)) * cos(radians(" + queries.longitude + ") - radians(longitude)) + sin(radians(" + queries.latitude + ")) * sin(radians(latitude)))"), 'distance']] },
+    //             // where: sequelize.where(sequelize.literal("(6371 * acos(cos(radians("+queries.latitude+")) * cos(radians(latitude)) * cos(radians("+queries.longitude+") - radians(longitude)) + sin(radians("+queries.latitude+")) * sin(radians(latitude)))) < " + radius)),
+    //             where: sequelize.literal('6371 * acos(cos(radians(' + queries.latitude + ')) * cos(radians(latitude)) * cos(radians(' + queries.longitude + ') - radians(longitude)) + sin(radians(' + queries.latitude + ')) * sin(radians(latitude))) <= ' + radius),
+    //             include: [
+    //                 {
+    //                     model: District
+    //                 }
+
+    //             ]
+    //         }
+    //     ]
+
+    // }));
+    let query ='Select *,6371 * acos (cos ( radians(:lat) )* cos( radians( latitude ) )* cos( radians( longitude ) - radians(:long) )+ sin ( radians(:lat) )   * sin( radians( latitude ) ) ) AS `distance` '
+    +' FROM items INNER JOIN addresses ON items.addressID = addresses.addressID INNER JOIN districts ON addresses.districtID = districts.districtID INNER JOIN provinces ON districts.provinceID = provinces.provinceID'
+    + ' WHERE items.userID <> \''+ userId +'\''
+    + ' GROUP BY items.itemID '
+    + ' HAVING distance <= ' + radius 
+    + ' ORDER BY distance ASC ;';
+    [err, items] = await to (sequelize.query(query, { replacements: { lat: queries.latitude,long:queries.longitude }, model: Item }))
+    if (err) {
+        TE(err.message);
+    }
+    return items;
+}
+module.exports.findOnMap = findOnMap
 

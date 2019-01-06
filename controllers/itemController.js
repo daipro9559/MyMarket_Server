@@ -125,7 +125,7 @@ const getItems =async (req,res)=>{
     // if (!categoryID){
     //     return ReE(res,"fail to execute action",status.UNPROCESSABLE_ENTITY)
     // }
-    let err,items
+    let err,items;
     [err,items] = await to(itemService.getItems(req.user.userID,req.query))
     if (err){
         return ReE(res,err,status.NOT_IMPLEMENTED)
@@ -204,8 +204,12 @@ var deleteItem = async (req,res)=>{
 }
 module.exports.deleteItem = deleteItem
 
-
-var requestBuy = async(req,res)=>{
-
+const findOnMap = async(req,res)=>{
+    let err, items;
+    [err,items] = await to(itemService.findOnMap(req.user.userID,req.query))
+    if (err){
+        return ReE(res,err,status.NOT_IMPLEMENTED)
+    }
+    return ReS(res,items,status.OK)
 }
-module.exports.requestBuy = requestBuy
+module.exports.findOnMap = findOnMap

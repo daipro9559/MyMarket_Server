@@ -20,6 +20,14 @@ module.exports = (sequelize, DataTypes) => {
       type:DataTypes.DOUBLE,
       allowNull:true
     },
+    location: {
+       type: DataTypes.GEOMETRY('POINT'),
+       allowNull: true
+    },
+    // distance: { // no have column this table, it will use check for item is marked
+    //   type: DataTypes.VIRTUAL,
+    //   defaultValue:0
+    // },
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE
   }, {});
