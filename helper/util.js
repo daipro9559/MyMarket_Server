@@ -116,3 +116,23 @@ const saveImages = async (imageFiles,userID,parent) => {
   }
 }
 module.exports.saveImages = saveImages
+
+const saveImage = async (imageFile,userID,parent) => {
+  // check files
+  if (imageFile) {
+    let err, result;
+    var file = imageFile.image
+    var imagePath, imagePathApi;
+    imagePath = getImagePath(userID, file.name, parent);
+    imagePathApi = imagePath.substr(7, imagePath.length);
+    [err, result] = await to(file.mv(imagePath))
+    if (err) {
+      TE(err)
+    }
+    return imagePathApi;
+  } else {
+    return null;
+  }
+}
+module.exports.saveImage = saveImage
+

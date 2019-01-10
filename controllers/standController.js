@@ -10,26 +10,28 @@ const CONFIG = require('../config/conf')
 const FCM = require('fcm-node')
 const fcm = new FCM(CONFIG.serverKey)
 var createStand = async(req,res)=>{
-    let err, stand={},body = req.body,address={}
-    address.address = body.address
-    address.districtID = body.districtID
-    let addressAdded
-    [err,addressAdded] = await to(addressService.addAddress(address))
+    let err, stand={},body = req.body,address={};
+    address.latitude = body.latitude;
+    address.longitude = body.longitude;
+    address.address = body.address;
+    address.districtID = body.districtID;
+    let addressAdded;
+    [err,addressAdded] = await to(addressService.addAddress(address));
     if (err){
         ReE(res,err,status.NOT_IMPLEMENTED)
     }
-    [err,stand.image] = await to(util.saveImages(req.files,req.user.userID,CONFIG.image_stand_path))
+    [err,stand.image] = await to(util.saveImages(req.files,req.user.userID,CONFIG.image_stand_path));
     stand.userID = req.user.userID
     stand.name = body.name
     stand.description = body.description
     stand.addressID = addressAdded.addressID
     stand.categoryID = body.categoryID
     let standAdded
-    [err,standAdded] = await to(req.user.createStand(stand))
+    [err,standAdded] = await to(req.user.createStand(stand));
     if (err){
-        return ReE(res,err,status.NOT_IMPLEMENTED)
+        return ReE(res,err,status.NOT_IMPLEMENTED);
     }
-    return ReS(res,standAdded,status.OK)
+    return ReS(res,standAdded,status.OK);
 }
 module.exports.createStand = createStand
 
@@ -216,8 +218,6 @@ const addItemToStandFromTransaction = async (req,res)=>{
     return ReS(res,null,status.OK,"Add item to stand completed")
 }
 module.exports.addItemToStandFromTransaction = addItemToStandFromTransaction
-
-
 const getStandsFollowed = async(req,res)=>{
     let err,userStandsFollowed;
     [err,userStandsFollowed] = await to(standService.getStandsFollowed(req.user.userID));
@@ -231,3 +231,8 @@ const getStandsFollowed = async(req,res)=>{
     return ReS(res,stands,stands,status.OK)
 }
 module.exports.getStandsFollowed = getStandsFollowed
+
+const updateStand = async(req,res)=>{
+    let err,result;
+}
+module.exports.updateStand = updateStand

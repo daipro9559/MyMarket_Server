@@ -45,12 +45,13 @@ router.get('/', function(req, res, next) {
   router.get('/user/profile/:userID',passport.authenticate('jwt', {session:false}),userController.getProfile)
   router.post('/user/updateToSeller',passport.authenticate('jwt', {session:false}),userController.updateToSeller)
   router.post('/user/addAddress',passport.authenticate('jwt', {session:false}),userController.addAddress)
-
+  router.post('/user',passport.authenticate('jwt', {session:false}),userController.updateProfile)
   //item case
   router.get('/categories',passport.authenticate('jwt', {session:false}),itemController.getAllCategory)
   router.get('/items',passport.authenticate('jwt',{session:false}),itemController.getItems)
   router.get('/items/findOnMap',passport.authenticate('jwt',{session:false}),itemController.findOnMap)
   router.post('/items',passport.authenticate('jwt',{session:false}),itemController.addItem)
+  router.put('/items/:itemID',passport.authenticate('jwt',{session:false}),itemController.updateItem)
   router.post('/items/mark',passport.authenticate('jwt',{session:false}),itemController.markItem)
   router.get('/items/mark',passport.authenticate('jwt',{session:false}),itemController.getMarkedItems)
   router.delete('/items/mark/:itemID',passport.authenticate('jwt',{session:false}),itemController.unMarkItem)

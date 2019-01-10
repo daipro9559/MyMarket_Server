@@ -226,3 +226,13 @@ const addAddress = async(user,body)=>{
     return updateResult
 }
 module.exports.addAddress = addAddress
+
+const updateProfile = async(user)=>{
+    let err,result;
+    [err,result] = await to(user.save());
+    if (err){
+        TE(err.message)
+    }
+    return result
+}
+module.exports.updateProfile = updateProfile

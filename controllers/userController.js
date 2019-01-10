@@ -3,6 +3,7 @@ const userService = require('../services/userService')
 const { to, ReE, ReS } = require('../services/utilService')
 const status = require('http-status')
 const util = require('../helper/util')
+const CONFIG = require('../config/conf')
 
 module.exports.create = async (req, res) => {
     var body = req.body
@@ -145,3 +146,28 @@ const addAddress = async(req,res)=>{
     return ReS(res,null,status.OK)
 }
 module.exports.addAddress = addAddress
+
+const updateProfile = async(req,res)=>{
+    let err,result,user = req.user;
+    if ( req.user.avatar != null){
+        util.asyncDeleteFiles(user.avatar).then((result)=>{
+            console.log("delete avatar completed")
+        })
+   }
+    if (req.files) {
+        [err, req.user.avatar] = await to(util.saveImage(req.files, user.userID, CONFIG.image_avatar_path));
+    }
+    if (req.body.name){
+        user.name = req.body.name;
+    }
+    if (req.body.phone){
+        user.phone = req.body.phone
+    }
+    [err,result] = await to(userService.updateProfile(user));
+    if (err){
+        return ReE(res,err,status.NOT_MODIFIED)
+    }
+    return ReS(res,null,status.OK)
+}
+module.exports.updateProfile = updateProfile
+

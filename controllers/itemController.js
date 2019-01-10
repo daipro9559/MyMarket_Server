@@ -25,6 +25,8 @@ const addItem = async (req,res)=>{
         item.addressID = body.addressID;
         item.standID = body.standID;
     } else {
+        address.latitude = body.latitude
+        address.longitude = body.longitude
         address.address = body.address
         address.districtID = body.districtID
         let addressAdded
@@ -54,7 +56,7 @@ const addItem = async (req,res)=>{
     condition.districtID = body.districtID;
     condition.provinceID = body.provinceID;
     condition.categoryID = body.categoryID
-    itemService.getAllUserForSendNotify(condition).then(users=>{
+    itemService.getAllUserForSendNotify(req.user.userID,condition).then(users=>{
         if (users.length > 0) {
             let dataNotification = {};
             dataNotification.itemID = itemAdded.itemID;
@@ -213,3 +215,15 @@ const findOnMap = async(req,res)=>{
     return ReS(res,items,status.OK)
 }
 module.exports.findOnMap = findOnMap
+
+const updateItem = async(req,res)=>{
+    let err,result;
+    [err,result] = await to(itemService.updateItem(req.user.userID,req.body,req.files));
+    if (err){
+        return ReE(res,err,status.NOT_MODIFIED);
+    }
+    let data={};
+    data.itemID = req.params.itemID;
+    return ReS(res,data,status.OK)
+}
+module.exports.updateItem = updateItem

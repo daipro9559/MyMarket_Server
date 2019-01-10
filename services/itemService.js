@@ -1,7 +1,7 @@
 'use strict'
 const {to,TE} = require('../services/utilService')
 const CONFIG = require('../config/conf')
-const {Category,Item,Address,District,UserItemMarked,sequelize,User,ConditionNotify} = require('../models')
+const {Category,Item,Address,District,Province,UserItemMarked,sequelize,User,ConditionNotify} = require('../models')
 const Sequelize = require('sequelize')
 const Op = Sequelize.Op
 const util = require('../helper/util')
@@ -138,7 +138,16 @@ const getItemDetail = async(userId,itemId)=>{
         },
         include: [
             {
-                model: Address
+                model: Address,
+                include: [{
+                    model: District,
+                    include:[{
+                        model: Province,
+                    }]
+                }]
+            },
+            {
+                model: Category
             }
         ]
     }))
@@ -261,11 +270,14 @@ const addItemToStandFromTransaction = async(userId,itemId,standId)=>{
 module.exports.addItemToStandFromTransaction = addItemToStandFromTransaction
 
 // get all user for notification
-const getAllUserForSendNotify = async(condition)=>{
+const getAllUserForSendNotify = async(userId,condition)=>{
     let err,users;
     [err,users] = await to(User.findAll({
         where:{
             tokenFirebase: {
+                [Op.ne]: null
+            },
+            userID :{
                 [Op.ne]: null
             }
         },
@@ -340,9 +352,16 @@ const findOnMap = async(userId, queries)=>{
     //     ]
 
     // }));
+    let whereQuery='items.userID <> \''+ userId +'\'';
+    if (queries.priceMax) {
+       whereQuery = whereQuery + ' and items.price < '+ queries.priceMax
+    } else if (queries.priceMin) {
+        whereQuery = whereQuery + ' and items.price > '+ queries.priceMin
+    }
+
     let query ='Select *,6371 * acos (cos ( radians(:lat) )* cos( radians( latitude ) )* cos( radians( longitude ) - radians(:long) )+ sin ( radians(:lat) )   * sin( radians( latitude ) ) ) AS `distance` '
     +' FROM items INNER JOIN addresses ON items.addressID = addresses.addressID INNER JOIN districts ON addresses.districtID = districts.districtID INNER JOIN provinces ON districts.provinceID = provinces.provinceID'
-    + ' WHERE items.userID <> \''+ userId +'\''
+    + ' WHERE ' + whereQuery
     + ' GROUP BY items.itemID '
     + ' HAVING distance <= ' + radius 
     + ' ORDER BY distance ASC ;';
@@ -353,4 +372,66 @@ const findOnMap = async(userId, queries)=>{
     return items;
 }
 module.exports.findOnMap = findOnMap
+
+const updateItem = async(userId,body,files)=>{
+    let err, itemUpdated;
+    let addressUpdate;
+    if (!body.standID) {
+        [err, addressUpdate] = await to(Address.update(
+            {
+                address: body.address,
+                latitude: body.latitude,
+                longitude: body.longitude,
+                districtID: body.districtID
+            },
+            {
+                where: {
+                    addressID: body.addressID
+                }
+            })
+        );
+    }
+    if (err){
+        TE(err.message)
+    }
+    [err,itemUpdated] = await to(getItemDetail(userId,body.itemID));
+    if(err){
+        TE(err.message)
+    }
+    let images=[];
+    if (body.deleteOldImage){
+        util.asyncDeleteFiles(itemUpdated.images);
+    }else{
+        images.concat(itemUpdated.images);
+    }
+    let newImages;
+    [err,newImages] = await to(util.saveImages(files,userId,CONFIG.image_item_path));
+    if (err){
+        TE(err.message)
+    }
+    
+    let concatImages = images.concat(JSON.parse(newImages));
+    
+    // [err, itemUpdated] = await to(Item.update(
+    //     {
+    //         name:body.name
+    //     },
+    //     {
+
+    //     })
+    // );
+    itemUpdated.name = body.name;
+    itemUpdated.price = body.price;
+    itemUpdated.images = JSON.stringify(concatImages);
+    itemUpdated.description= body.description;
+    itemUpdated.needToSell = body.needToSell;
+    itemUpdated.categoryID = body.categoryID;
+    let result; 
+    [err,result] = await to(itemUpdated.save()); 
+    if (err) {
+        TE(err);
+    }
+    return result;
+}
+module.exports.updateItem = updateItem
 

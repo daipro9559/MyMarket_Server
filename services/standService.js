@@ -1,8 +1,9 @@
 'use strict'
 const {to,TE} = require('../services/utilService')
 const CONFIG = require('../config/conf')
-const {Address,Stand,sequelize,User,Sequelize,UserStandFollow,ConditionNotify} = require('../models')
+const {Address,Item,Stand,sequelize,User,Sequelize,UserStandFollow,ConditionNotify} = require('../models')
 const Op = Sequelize.Op
+const util = require('../helper/util')
 
 var createStand = async(stand)=>{
     let err,standAdded
@@ -68,11 +69,20 @@ const deleteStand = async(standId)=>{
         TE(err);
     }
     if ( stand.image.length > 0){
-        util.asyncDeleteFiles(item.images).then((result)=>{
+        util.asyncDeleteFiles(stand.image).then((result)=>{
             console.log("delete file completed")
         })
    }
    let result;
+   // delete all item 
+    [err, result] = await to(Item.destroy({
+        where: {
+            standID: standId
+        }
+    }));
+    if (err){
+        TE(err.message)
+    }
    [err,result] = await to(stand.destroy());
     if (err) {
         TE(err);
@@ -183,4 +193,5 @@ const getStandsFollowed = async(userId)=>{
     return userStandFollowed;
 }
 module.exports.getStandsFollowed = getStandsFollowed
+
 
